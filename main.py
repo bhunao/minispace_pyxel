@@ -1,41 +1,49 @@
 import math
 import pyxel
-from typing import Any, List
+import logging
+from typing import Any, List, Tuple
 from dataclasses import dataclass
 
-ME = 0, 32, 0, 8, 8, 0
-STARS = (
-        (0, 0, 80, 8, 8, 0),
-        (0, 8, 80, 8, 8, 0),
-        (0, 0, 88, 8, 8, 0),
-        (0, 8, 88, 8, 8, 0),
-)
-SHIP1 = (
-        (0, 0, 16, 16, 16, 0),
-        (0, 16, 16, 16, 16, 0),
-)
-ENEMY1 = (
-    (0, 0, 0, 8, 8, 0),
-    (0, 0, 8, 8, 8, 0),
-    (0, 8, 0, 8, 8, 0),
-    (0, 8, 8, 8, 8, 0),
-)
+
+SpriteType = Tuple[int, int, int, int, int, int]
 
 
-purple = ((0, 24, 0, 4, 4, 0),)
+def sprite(x, y, w=8, h=8, image=0, colkey=0) -> SpriteType:
+    return image, x, y, w, h, colkey
 
-ENEMY2 = ((0, 0, 48, 16, 16, 0),)
 
-PROJ1 = (
-        (0, 32, 16, 8, 8, 0),
-        (0, 40, 16, 8, 8, 0),
-)
-PROJ2 = (
-        (0, 32, 24, 4, 4, 0),
-        (0, 36, 24, 4, 4, 0),
-        (0, 32, 28, 4, 4, 0),
-        (0, 36, 28, 4, 4, 0),
-)
+class Objetcs:
+    STARS = (
+        sprite(0, 80),
+        sprite(8, 80),
+        sprite(0, 88),
+        sprite(8, 88),
+    )
+
+
+class Ships():
+    Blue = (
+        sprite(0, 16, 16, 16),
+        sprite(16, 16, 16, 16),
+    )
+    ENEMY1 = (
+        sprite(0, 0),
+        sprite(0, 8),
+        sprite(8, 0),
+        sprite(8, 8),
+    )
+    ENEMY2 = (
+        sprite(0, 48, 16, 16),
+    )
+
+
+class Projectiles:
+    purple = (
+        sprite(24, 0, 4, 4),
+    )
+    purple_beam = (
+        sprite(28, 4, 4, 4),
+    )
 
 
 def collission_between(entity1, entities_list):
@@ -77,11 +85,6 @@ class Projectile:
     speed: float
     origin: Any
 
-    def update(self):
-        angle_rad = math.radians(self.angle)
-        self.render.x += math.cos(angle_rad) * self.speed
-        self.render.y += math.sin(angle_rad) * self.speed
-
 
 @dataclass
 class Player:
@@ -108,12 +111,24 @@ class Enemy:
     hp: int = 1
     gun: Gun | None = None
 
-    def update(self):
-        self.render.x += pyxel.sin(pyxel.frame_count * 6)
-        self.render.y += 1
+
+@dataclass
+class Text:
+    text: str
+    colkey: int
+    pos: Tuple[int, int] | str
+
+    def __call__(self, *args: Any, **kwds: Any) -> Any:
+        if isinstance(self.pos, tuple):
+            return self.pos[0], self.pos[1], self.text, self.colkey
+        elif isinstance(self.pos, str):
+            if self.pos == "center":
+                x = pyxel.width / 2 - len(self.pos) * 2
+                y = pyxel.height / 2 - 3
+                return x, y, self.text, self.colkey
 
 
-def shoot(origin, angle=90, speed=3, sprite=PROJ2) -> List[Projectile]:
+def shoot(origin, angle=90, speed=3, sprite=Projectiles.purple) -> List[Projectile]:
     r = origin.render
     render = Render(r.x + r.w//2, r.y + r.h//2, sprite)
     return [Projectile(render, angle, speed, type(origin))]
@@ -129,18 +144,24 @@ def out_of_bound(render: Render) -> bool:
     return False
 
 
-class WaveBuilder:
-    def __init__(self, entities):
-        self.entities = entities
-        self._to_spawn = []
+waves = {
+    0: {
+        "Entity": Enemy,
+        "sprite": Ships.ENEMY2,
+        "quantity": 5,
+    }
+}
 
-    def spawn(self, Entity, sprite, pos=None, quantity=1, interval=10):
-        for _ in range(quantity):
-            x = pyxel.rndi(0, pyxel.width)
-            render = Render(x, -16, sprite)
-            ent = Entity(render)
-            here = ent, pyxel.frame_count, interval
-            self._to_spawn.append(here)
+
+def wave_gen(waves):
+    for wave in waves:
+        yield wave
+
+    logging.info("end of waves")
+
+
+def r_x():
+    return pyxel.rndi(0, pyxel.width)
 
 
 class Sim:
@@ -148,16 +169,26 @@ class Sim:
         pyxel.init(180, 140)
         pyxel.load('assets.pyxres')
 
-        player_render = Render(pyxel.width//2, pyxel.height//1.25, SHIP1)
+        player_render = Render(pyxel.width//2, pyxel.height//1.25, Ships.Blue)
         self.player: Player = Player(player_render)
         self.scroll_x: int = 0
         self.scroll_y: int = 0
+
+        w = [
+            [Enemy(Render(r_x(), -10, Ships.ENEMY1)) for x in range(1)],
+            [Enemy(Render(r_x(), -10, Ships.ENEMY2)) for x in range(3)],
+            [Enemy(Render(r_x(), -10, Ships.ENEMY1)) for x in range(5)],
+            [Enemy(Render(r_x(), -10, Ships.ENEMY2)) for x in range(7)],
+            [Enemy(Render(r_x(), -10, Ships.ENEMY1)) for x in range(9)],
+        ]
+        self.waves = wave_gen(w)
+        self.end = False
 
         self.bg = []
         for _ in range(10):
             x = pyxel.rndi(0, pyxel.width)
             y = pyxel.rndi(0, pyxel.height)
-            sprite = STARS[pyxel.rndi(0, len(STARS)-1)]
+            sprite = Objetcs.STARS[pyxel.rndi(0, len(Objetcs.STARS)-1)]
             star = Render(x, y, tuple([sprite]))
             self.bg.append(star)
 
@@ -179,7 +210,8 @@ class Sim:
         if pyxel.btn(pyxel.KEY_UP):
             player.y = (player.y - 1) % pyxel.height
         if pyxel.btn(pyxel.KEY_SPACE):
-            self.entities[Projectile] += shoot(self.player, -90, 5)
+            self.entities[Projectile] += shoot(self.player, -90,
+                                               5, sprite=Projectiles.purple_beam)
 
     def kill(self, entity):
         self.entities[type(entity)].remove(entity)
@@ -187,6 +219,9 @@ class Sim:
     def match_entity(self, entity):
         match entity:
             case Enemy():
+                entity.render.x += pyxel.sin(pyxel.frame_count * 6)
+                entity.render.y += 1
+
                 if entity.hp <= 0:
                     self.kill(entity)
                     pyxel.play(0, 1)
@@ -194,8 +229,13 @@ class Sim:
                     self.kill(entity)
 
                 if entity.gun and entity.gun.cooldown():
-                    self.entities[Projectile] += shoot(entity, sprite=purple)
+                    self.entities[Projectile] += shoot(
+                        entity, sprite=Projectiles.purple)
             case Projectile():
+                angle_rad = math.radians(entity.angle)
+                entity.render.x += math.cos(angle_rad) * entity.speed
+                entity.render.y += math.sin(angle_rad) * entity.speed
+
                 if out_of_bound(entity.render):
                     self.kill(entity)
                 if entity.origin == Enemy:
@@ -210,6 +250,8 @@ class Sim:
                     if collided_ent:
                         collided_ent.hp -= 1
                         self.kill(entity)
+            case Gun():
+                pass
 
     def update(self):
         self.player_controller()
@@ -217,19 +259,17 @@ class Sim:
         for item in self.bg:
             _max = pyxel.height + 5
             item.y = (item.y + 3) % _max
-            print(item.y, _max)
 
-        if len(self.entities[Enemy]) < 3:
-            x = pyxel.rndi(0, pyxel.width)
-            y = pyxel.rndi(0, pyxel.height//4)
-            enemy = (ENEMY1, ENEMY2)
-            enemy_render = Render(x, y, enemy[pyxel.frame_count % 2])
-            enemy = Enemy(enemy_render, gun=Gun())
-            self.entities[Enemy].append(enemy)
+        if len(self.entities[Enemy]) <= 0:
+            try:
+                next_wave = next(self.waves)
+                print((next_wave))
+                self.entities[Enemy] += next_wave
+            except StopIteration:
+                self.end = True
 
         for entity_list in self.entities.values():
             for entity in entity_list:
-                entity.update()
                 self.match_entity(entity)
 
     def draw(self):
@@ -240,6 +280,14 @@ class Sim:
         for entity_list in self.entities.values():
             for entity in entity_list:
                 pyxel.blt(*entity.render())
+
+        if self.end:
+            text = "FIM!"
+            x = pyxel.width / 2 - len(text) * 2
+            y = pyxel.height / 2 - 3
+
+            pyxel.text(x, y, text, 5)
+            pyxel.text(x-1, y-1, text, pyxel.frame_count % 10)
 
 
 Sim()
