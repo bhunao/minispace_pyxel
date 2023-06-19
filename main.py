@@ -35,6 +35,9 @@ class Ships():
     ENEMY2 = (
         sprite(0, 48, 16, 16),
     )
+    ENEMY3 = (
+        sprite(0, 32, 16, 16),
+    )
 
 
 class Projectiles:
@@ -144,15 +147,6 @@ def out_of_bound(render: Render) -> bool:
     return False
 
 
-waves = {
-    0: {
-        "Entity": Enemy,
-        "sprite": Ships.ENEMY2,
-        "quantity": 5,
-    }
-}
-
-
 def wave_gen(waves):
     for wave in waves:
         yield wave
@@ -175,11 +169,12 @@ class Sim:
         self.scroll_y: int = 0
 
         w = [
-            [Enemy(Render(r_x(), -10, Ships.ENEMY1)) for x in range(1)],
-            [Enemy(Render(r_x(), -10, Ships.ENEMY2)) for x in range(3)],
-            [Enemy(Render(r_x(), -10, Ships.ENEMY1)) for x in range(5)],
-            [Enemy(Render(r_x(), -10, Ships.ENEMY2)) for x in range(7)],
-            [Enemy(Render(r_x(), -10, Ships.ENEMY1)) for x in range(9)],
+            [Enemy(Render(r_x(), -10, Ships.ENEMY1)) for _ in range(1)],
+            [Enemy(Render(r_x(), -10, Ships.ENEMY2)) for _ in range(3)],
+            [Enemy(Render(r_x(), -10, Ships.ENEMY1)) for _ in range(5)],
+            [Enemy(Render(r_x(), -10, Ships.ENEMY2)) for _ in range(7)],
+            [Enemy(Render(r_x(), -10, Ships.ENEMY1)) for _ in range(9)],
+            [Enemy(Render(80, -10, Ships.ENEMY3), hp=30) for _ in range(1)],
         ]
         self.waves = wave_gen(w)
         self.end = False
@@ -199,16 +194,16 @@ class Sim:
 
         pyxel.run(self.update, self.draw)
 
-    def player_controller(self):
+    def controller(self):
         player = self.player.render
         if pyxel.btn(pyxel.KEY_LEFT):
-            player.x = (player.x - 1) % pyxel.width
+            player.x = (player.x - 2) % pyxel.width
         if pyxel.btn(pyxel.KEY_RIGHT):
-            player.x = (player.x + 1) % pyxel.width
+            player.x = (player.x + 2) % pyxel.width
         if pyxel.btn(pyxel.KEY_DOWN):
-            player.y = (player.y + 1) % pyxel.height
+            player.y = (player.y + 2) % pyxel.height
         if pyxel.btn(pyxel.KEY_UP):
-            player.y = (player.y - 1) % pyxel.height
+            player.y = (player.y - 2) % pyxel.height
         if pyxel.btn(pyxel.KEY_SPACE):
             self.entities[Projectile] += shoot(self.player, -90,
                                                5, sprite=Projectiles.purple_beam)
@@ -249,12 +244,13 @@ class Sim:
                         entity, self.entities[Enemy])
                     if collided_ent:
                         collided_ent.hp -= 1
+                        pyxel.play(0, 1)
                         self.kill(entity)
             case Gun():
                 pass
 
     def update(self):
-        self.player_controller()
+        self.controller()
 
         for item in self.bg:
             _max = pyxel.height + 5
