@@ -1,5 +1,5 @@
 import pyxel
-from typing import Sequence
+from typing import Dict, Optional, Sequence
 from math import radians, cos, sin
 from dataclasses import dataclass
 
@@ -23,6 +23,21 @@ class Render:
         nframes = 5
         i = pyxel.frame_count % (nframes * len(self.sprite)) // nframes
         pyxel.blt(self.x, self.y, *self.sprite[i])
+
+
+@dataclass
+class StateRender(Render):
+    states: Optional[Dict] = None
+    current_state: Optional[type] = None
+
+    def render(self):
+        if self.states and self.current_state:
+            sprite = self.states[self.current_state]
+        else:
+            sprite = self.sprite
+        nframes = 5
+        i = pyxel.frame_count % (nframes * len(sprite)) // nframes
+        pyxel.blt(self.x, self.y, *sprite[i])
 
 
 @dataclass

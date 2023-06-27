@@ -1,20 +1,20 @@
 from dataclasses import dataclass
 from typing import Optional
-from components import Render, Movement
+from engine.components import StateRender, Movement
 
 
 @dataclass
-class Player(Render, Movement):
+class Player(StateRender, Movement):
     hp: int = 3
 
 
 @dataclass
-class Enemy(Render, Movement):
+class Enemy(StateRender, Movement):
     hp: int = 3
 
 
 @dataclass
-class Projectile(Render, Movement):
+class Projectile(StateRender, Movement):
     origin: Optional[type] = None
 
     def collide_with_target(self, other):
