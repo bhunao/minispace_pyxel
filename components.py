@@ -56,6 +56,7 @@ class Movement:
 @dataclass
 class Combat:
     hp: int = 1
+    max_hp: int = hp
     damage: int = 1
 
     def attack(self, other, kill_func: Optional[Callable] = None):
