@@ -1,5 +1,5 @@
 import pyxel
-from typing import Dict, Optional, Sequence
+from typing import Callable, Dict, Optional, Sequence
 from math import radians, cos, sin
 from dataclasses import dataclass
 
@@ -51,3 +51,15 @@ class Movement:
         angle_rad = radians(self.angle)
         self.x += cos(angle_rad) * self.speed
         self.y += sin(angle_rad) * self.speed
+
+
+@dataclass
+class Combat:
+    hp: int = 1
+    damage: int = 1
+
+    def attack(self, other, kill_func: Optional[Callable] = None):
+        other.hp -= self.damage
+        if other.hp <= 0 and kill_func:
+            kill_func(other)
+            pyxel.play(0, 0)
