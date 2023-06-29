@@ -19,7 +19,7 @@ class Render:
             return False
         return True
 
-    def render(self):
+    def draw(self):
         nframes = 5
         i = pyxel.frame_count % (nframes * len(self.sprite)) // nframes
         pyxel.blt(self.x, self.y, *self.sprite[i])
@@ -30,7 +30,7 @@ class StateRender(Render):
     states: Optional[Dict] = None
     current_state: Optional[type] = None
 
-    def render(self):
+    def draw(self):
         if self.states and self.current_state:
             sprite = self.states[self.current_state]
         else:
@@ -59,8 +59,28 @@ class Combat:
     max_hp: int = hp
     damage: int = 1
 
-    def attack(self, other, kill_func: Optional[Callable] = None):
+    def attack(self, other, game: Optional[Callable] = None):
         other.hp -= self.damage
-        if other.hp <= 0 and kill_func:
-            kill_func(other)
+        if game:
+            game.add(FloatingText(x=other.x, y=other.y, text=str(self.damage)))
+        if other.hp <= 0 and game:
+            game.remove(other)
             pyxel.play(0, 0)
+
+
+@dataclass
+class FloatingText:
+    text: str = "PLACEHOLDER"
+    x: float = 0
+    y: float = 0
+    colkey: int = 9
+    duration: int = 25
+
+    def update(self, game):
+        self.y -= 0.5
+        self.duration -= 1
+        if self.duration <= 0 and game:
+            game.remove(self)
+
+    def draw(self):
+        pyxel.text(self.x, self.y, self.text, self.colkey)
