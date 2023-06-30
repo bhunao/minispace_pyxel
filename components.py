@@ -58,14 +58,19 @@ class Combat:
     hp: int = 1
     max_hp: int = hp
     damage: int = 1
+    dmg_cd: int = 0
+    interval: int = 10
 
     def attack(self, other, game: Optional[Callable] = None):
-        other.hp -= self.damage
-        if game:
-            game.add(FloatingText(x=other.x, y=other.y, text=str(self.damage)))
-        if other.hp <= 0 and game:
-            game.remove(other)
-            pyxel.play(0, 0)
+        if other.dmg_cd + other.interval <= pyxel.frame_count:
+            other.dmg_cd = pyxel.frame_count
+            other.hp -= self.damage
+            if game:
+                game.add(FloatingText(
+                    x=other.x, y=other.y, text=str(self.damage)))
+            if other.hp <= 0 and game:
+                game.remove(other)
+                pyxel.play(0, 0)
 
 
 @dataclass
