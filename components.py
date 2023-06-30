@@ -1,6 +1,6 @@
 import pyxel
 from typing import Callable, Dict, Optional, Sequence
-from math import radians, cos, sin
+from math import degrees, radians, cos, sin, atan2
 from dataclasses import dataclass
 
 
@@ -44,13 +44,26 @@ class StateRender(Render):
 class Movement:
     x: float = 0
     y: float = 0
-    speed: int = 0
-    angle: int = 0
+    speed: float = 0
+    angle: float = 0
 
     def move(self):
         angle_rad = radians(self.angle)
         self.x += cos(angle_rad) * self.speed
         self.y += sin(angle_rad) * self.speed
+
+    def move_to_target(self, target=None):
+        if target is None:
+            self.move()
+            return
+
+        dx = self.x - target.x
+        dy = self.y - target.y
+
+        angle = atan2(dx, dy)
+        angle = degrees(angle)
+        self.angle = -angle
+        self.move()
 
 
 @dataclass
@@ -59,18 +72,17 @@ class Combat:
     max_hp: int = hp
     damage: int = 1
     dmg_cd: int = 0
-    interval: int = 10
+    dmg_interval: int = 10
 
     def attack(self, other, game: Optional[Callable] = None):
-        if other.dmg_cd + other.interval <= pyxel.frame_count:
-            other.dmg_cd = pyxel.frame_count
-            other.hp -= self.damage
-            if game:
-                game.add(FloatingText(
-                    x=other.x, y=other.y, text=str(self.damage)))
-            if other.hp <= 0 and game:
-                game.remove(other)
-                pyxel.play(0, 0)
+        other.dmg_cd = pyxel.frame_count
+        other.hp -= self.damage
+        if game:
+            game.add(FloatingText(
+                x=other.x, y=other.y, text=str(self.damage)))
+        if other.hp <= 0 and game:
+            game.remove(other)
+            pyxel.play(0, 0)
 
 
 @dataclass
