@@ -59,11 +59,35 @@ class Movement:
 
         dx = self.x - target.x
         dy = self.y - target.y
-
-        angle = atan2(dx, dy)
-        angle = degrees(angle)
-        self.angle = -angle
+        angle = - degrees(atan2(dx, dy)) - 90
+        self.angle = angle
         self.move()
+
+    def move_away_from(self, target=None):
+        if target is None:
+            self.move()
+            return
+
+        dx = self.x - target.x
+        dy = self.y - target.y
+        angle = degrees(atan2(dx, dy)) - 90
+        self.angle = angle
+        self.move()
+
+
+@dataclass
+class MovementMinDistance(Movement):
+    def move_keep_distance(self, target=None):
+        if target is None:
+            self.move()
+        else:
+            n1 = (self.x - target.x)**2
+            n2 = (self.y - target.y)**2
+            distance = pyxel.sqrt(n1 + n2)
+            if distance > 75:
+                self.move_to_target(target)
+            elif distance < 50:
+                self.move_away_from(target)
 
 
 @dataclass
@@ -74,7 +98,7 @@ class Combat:
     dmg_cd: int = 0
     dmg_interval: int = 10
 
-    def attack(self, other, game: Optional[Callable] = None):
+    def attack(self, other, game=None):
         other.dmg_cd = pyxel.frame_count
         other.hp -= self.damage
         if game:
