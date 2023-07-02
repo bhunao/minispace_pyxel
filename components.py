@@ -1,5 +1,5 @@
 import pyxel
-from typing import Callable, Dict, Optional, Sequence
+from typing import Dict, Optional, Sequence
 from math import degrees, radians, cos, sin, atan2
 from dataclasses import dataclass
 
