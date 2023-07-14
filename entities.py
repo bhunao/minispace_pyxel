@@ -93,7 +93,7 @@ def enemy4(create_entity, x=None, y=None):
     _x, _y = rndxy()
     x = x if x else _x
     y = y if y else -16
-    hp = 50
+    hp = 150
     return create_entity(
         Sprite(
             sprite=sprites.E4
