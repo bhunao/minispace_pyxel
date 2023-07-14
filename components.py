@@ -16,6 +16,10 @@ class Sprite:
     w: int = sprite[0][3]
     h: int = sprite[0][4]
 
+    def __post_init__(self):
+        self.w: int = self.sprite[0][3]
+        self.h: int = self.sprite[0][4]
+
 
 @dataclass
 class Circle:

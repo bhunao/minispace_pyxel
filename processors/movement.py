@@ -25,7 +25,6 @@ class Move(Processor):
 
             if pos.y > pyxel.height + 15:
                 pos.y = 0 - pyxel.frame_count % 25
-            if pos.x > pyxel.width + 15 or pos.x < 0 - 15:
                 pos.x = pyxel.rndi(0, pyxel.width)
 
     @staticmethod

@@ -19,13 +19,10 @@ class InputHandler(Processor):
             if pyxel.btn(pyxel.KEY_S):
                 pos.y += 2
             if pyxel.btn(pyxel.KEY_E):
-                _, (epos, esprite, ecombat, _) = self.world.get_components(
-                    Pos, Sprite, Combat, Enemy)[-1]
                 sprite = sprites.BULLET
                 x = pos.x + psprite.w//2 - sprite[0][3] // 2
 
-                angle = sin(pyxel.frame_count % 90) * 10
-                print(angle)
+                angle = sin(pyxel.frame_count % 90) * 15
                 angle -= 90
 
                 self.world.create_entity(
@@ -49,14 +46,8 @@ class InputHandler(Processor):
                         Combat(damage=combat.damage),
                     )
             if pyxel.btn(pyxel.KEY_SPACE) and frame_cd(5):
-                _, (epos, esprite, ecombat, _) = self.world.get_components(
-                    Pos, Sprite, Combat, Enemy)[-1]
                 sprite = sprites.BULLET
                 x = pos.x + psprite.w//2 - sprite[0][3] // 2
-
-                dx = pos.x - epos.x
-                dy = pos.y - epos.y
-                angle = - degrees(atan2(dx, dy)) - 90
                 angle = -90
 
                 start = -25

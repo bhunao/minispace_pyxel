@@ -60,6 +60,10 @@ E3 = [
     (0, 0, 32, 16, 16, Colors.BLACK),
     (0, 16, 32, 16, 16, Colors.BLACK),
 ]
+E4 = [
+    (0, 0, 112, 32, 32, Colors.BLACK),
+    (0, 32, 112, 32, 32, Colors.BLACK),
+]
 
 
 STARS = [

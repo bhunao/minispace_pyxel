@@ -1,83 +1,30 @@
 import pyxel
 from esper import Processor
-from components import Pos, Sprite, Combat, Player, Enemy, Movement, Gun, FourGun, HPBar, MoveToPlayer
-from sprites import WARRIOR, DOWN
-import sprites
-from functions import rndxy, frame_cd
+from components import Pos, Enemy
+from waves import waves
 
 
 class EnemySpawner(Processor):
+    def __init__(self) -> None:
+        super().__init__()
+        self.wave_n: int = 0
+        self.waves: list = waves
+
+    def spawn_wave(self):
+        waves_size = len(self.waves)
+        if self.wave_n < waves_size:
+            func, args, quantity, spawn_next = self.waves[self.wave_n]
+            for _ in range(quantity):
+                func(self.world.create_entity)
+            self.wave_n += 1
+            if spawn_next:
+                self.spawn_wave()
+
     def process(self):
-        pid, (playerpos, playersprite, pcombat, player) = self.world.get_components(
-            Pos, Sprite, Combat, Player)[0]
+        enemy_len = len(self.world.get_components(Enemy))
+        if enemy_len == 0:
+            self.spawn_wave()
 
-        comps = self.world.get_components(Enemy)
-        if len(comps) <= 5:
-            x, y = rndxy()
-            y = - 5
-            match pyxel.frame_count % player.level:
-                case 1:
-                    self.world.create_entity(
-                        Sprite(
-                            sprite=sprites.E1
-                        ),
-                        Pos(
-                            x=x,
-                            y=y,
-                        ),
-                        MoveToPlayer(speed=1),
-                        Enemy(),
-                        Combat(hp=player.level*10,
-                               max_hp=player.level*10, damage=1),
-                        FourGun(speed=2, angle=0, cd=50),
-                        HPBar(),
-                    )
-
-                case 2:
-                    hp = player.level * 2
-                    self.world.create_entity(
-                        Sprite(
-                            sprite=sprites.E2
-                        ),
-                        Pos(
-                            x=x,
-                            y=y,
-                        ),
-                        MoveToPlayer(speed=1),
-                        Enemy(),
-                        Combat(hp=hp, max_hp=hp, damage=player.level//2+1),
-                        Gun(speed=3, angle=90, aim_target=True, cd=4),
-                        HPBar()
-                    )
-
-                case 3:
-                    hp = player.level * 3
-                    self.world.create_entity(
-                        Sprite(
-                            sprite=sprites.E3
-                        ),
-                        Pos(
-                            x=x,
-                            y=y,
-                        ),
-                        MoveToPlayer(speed=1),
-                        Enemy(),
-                        Combat(hp=hp, max_hp=hp, damage=player.level//2+1),
-                        Gun(speed=1, angle=90, cd=50),
-                        HPBar()
-                    )
-
-                case _:
-                    hp = player.level + 1
-                    self.world.create_entity(
-                        Sprite(
-                            sprite=sprites.SPHERE
-                        ),
-                        Pos(
-                            x=x,
-                            y=y,
-                        ),
-                        MoveToPlayer(speed=1),
-                        Enemy(),
-                        Combat(hp=hp, max_hp=hp, damage=player.level//2+1),
-                    )
+        for eid, (pos, _) in self.world.get_components(Pos, Enemy):
+            if pos.y > pyxel.height + 64:
+                self.world.delete_entity(eid)

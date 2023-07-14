@@ -37,7 +37,7 @@ class App:
             Combat(hp=5, max_hp=5, damage=1)
         )
 
-        for _ in range(25):
+        for _ in range(125):
             x, y = rndxy()
             speed = pyxel.rndi(4, 5)
             sprite = [sprites.STARS[pyxel.rndi(0, len(sprites.STARS)-1)]]
