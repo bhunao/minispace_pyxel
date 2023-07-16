@@ -75,6 +75,12 @@ class MoveXtoPlayer(Movement):
 
 
 @dataclass
+class CircileNearTarget(Movement):
+    min_dist: int = 10
+    max_dist: int = 20
+
+
+@dataclass
 class Timer:
     time: int
 

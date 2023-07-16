@@ -1,7 +1,7 @@
 import pyxel
 from esper import Processor
-from components import Pos, Player, Movement, CircularMovement, Enemy, MoveToPlayer, Star, MoveXtoPlayer, Sprite
-from math import cos, sin, radians, degrees, atan2
+from components import Pos, Player, Movement, CircularMovement, Enemy, MoveToPlayer, Star, MoveXtoPlayer, CircileNearTarget
+from math import cos, sin, radians, degrees, atan2, sqrt
 
 
 class Move(Processor):
@@ -23,6 +23,14 @@ class Move(Processor):
             angle_rad = radians(movement.angle)
             pos.x += cos(angle_rad) * movement.speed
             pos.y += 1 if pos.y < 30 else 0
+
+        for _id, (pos, movement) in self.world.get_components(Pos, CircileNearTarget):
+            self.move_keep_distance(pos, movement, player)
+            self.move(pos, movement)
+            # dx = pos.x - player.x
+            # dy = pos.y - player.y
+            # angle = - degrees(atan2(dx, dy)) - 90
+            # movement.angle = angle
 
         for _id, (pos, movement, _) in self.world.get_components(Pos, Movement, Star):
             mid = pyxel.width // 2
@@ -57,11 +65,14 @@ class Move(Processor):
         angle = degrees(pyxel.atan2(dx, dy)) - 90
         moviment.angle = angle
 
-    def move_keep_distance(self, pos, moviment, target):
+    def move_keep_distance(self, pos, movement, target):
         n1 = (pos.x - target.x)**2
         n2 = (pos.y - target.y)**2
         distance = sqrt(n1 + n2)
-        if distance > 75:
-            self.move_to_target(pos, moviment, target)
-        elif distance < 50:
-            self.move_away_from(pos, moviment, target)
+        print(distance)
+        if distance > 50:
+            self.move_to_target(pos, movement, target)
+        elif distance < 100:
+            self.move_away_from(pos, movement, target)
+        else:
+            self.move_circular(pos, movement)
