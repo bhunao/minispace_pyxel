@@ -1,6 +1,6 @@
 import pyxel
 from esper import Processor
-from components import Pos, Player, Movement, CircularMovement, Enemy, MoveToPlayer, Star
+from components import Pos, Player, Movement, CircularMovement, Enemy, MoveToPlayer, Star, MoveXtoPlayer, Sprite
 from math import cos, sin, radians, degrees, atan2
 
 
@@ -17,6 +17,12 @@ class Move(Processor):
 
         for _id, (pos, movement) in self.world.get_components(Pos, CircularMovement):
             self.move_circular(pos, movement)
+
+        for _id, (pos, movement) in self.world.get_components(Pos, MoveXtoPlayer):
+            self.move_to_target(pos, movement, target=player)
+            angle_rad = radians(movement.angle)
+            pos.x += cos(angle_rad) * movement.speed
+            pos.y += 1 if pos.y < 30 else 0
 
         for _id, (pos, movement, _) in self.world.get_components(Pos, Movement, Star):
             mid = pyxel.width // 2

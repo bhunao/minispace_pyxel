@@ -1,6 +1,6 @@
 import pyxel
 from esper import Processor
-from components import Pos, Sprite, Combat, Player, Enemy, Movement, Gun, FourGun, HPBar, MoveToPlayer
+from components import Pos, Sprite, Combat, Player, Enemy, Movement, Gun, FourGun, HPBar, MoveToPlayer, MoveXtoPlayer
 from sprites import WARRIOR, DOWN
 import sprites
 from functions import rndxy, frame_cd
@@ -102,7 +102,7 @@ def enemy4(create_entity, x=None, y=None):
             x=x,
             y=y,
         ),
-        MoveToPlayer(speed=1),
+        MoveXtoPlayer(speed=5),
         Enemy(),
         Combat(hp=hp,
                max_hp=hp, damage=4),

@@ -70,6 +70,10 @@ class MoveToPlayer(Movement):
     pass
 
 
+class MoveXtoPlayer(Movement):
+    pass
+
+
 @dataclass
 class Timer:
     time: int
