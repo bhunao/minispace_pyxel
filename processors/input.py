@@ -12,13 +12,29 @@ class InputHandler(Processor):
     def __init__(self) -> None:
         super().__init__()
         self.player_attack = self.normal_attack
+        self.n1 = 1
+        self.n2 = 1
+
+    def star_attack2(self, pos, combat, psprite, player):
+        sprite = sprites.BULLET
+        for angle in range(0, 360, 45):
+            # for side in Sides:
+            sprite = sprites.FIRE[0:pyxel.rndi(1, 3)]
+            x = pos.x + psprite.w//2 - sprite[0][3] // 2
+            self.world.create_entity(
+                Projectile(),
+                Pos(x=x, y=pos.y+5),
+                Sprite(sprite=sprite),
+                CircularMovement(speed=-1, angle=angle),
+                Movement(speed=pyxel.rndi(-3, -4), angle=-90),
+                Timer(pyxel.rndi(5, 10)),
+                Combat(damage=combat.damage),
+            )
 
     def zigzag_attack(self, pos, combat, psprite, player):
         sprite = sprites.BULLET
         x = pos.x + psprite.w//2 - sprite[0][3] // 2
-        angle = sin(pyxel.frame_count % 90) * 15
-        angle -= 90
-        angle = -90
+        angle = -65
 
         self.world.create_entity(
             Projectile(),
@@ -30,28 +46,17 @@ class InputHandler(Processor):
             Timer(45),
             Combat(damage=combat.damage),
         )
-        angle += 50
-        self.world.create_entity(
-            Projectile(),
-            Pos(x=x, y=pos.y),
-            Sprite(sprite=sprites.BULLET),
-            Movement(speed=3, angle=angle),
-            MoveXtoPlayer(speed=3, angle=angle),
-            CircularMovement(speed=2, angle=angle),
-            Timer(45),
-            Combat(damage=combat.damage),
-        )
-        angle -= 100
-        self.world.create_entity(
-            Projectile(),
-            Pos(x=x, y=pos.y),
-            Sprite(sprite=sprites.BULLET),
-            Movement(speed=3, angle=angle),
-            MoveXtoPlayer(speed=9, angle=angle),
-            CircularMovement(speed=2, angle=angle),
-            Timer(45),
-            Combat(damage=combat.damage),
-        )
+        for plusangle in range(-45, 45, 15):
+            self.world.create_entity(
+                Projectile(),
+                Pos(x=x, y=pos.y),
+                Sprite(sprite=sprites.BULLET),
+                Movement(speed=3, angle=angle+plusangle),
+                MoveXtoPlayer(speed=3),
+                CircularMovement(speed=1, angle=plusangle),
+                Timer(45),
+                Combat(damage=combat.damage),
+            )
 
     def spray_attack(self, pos, combat, psprite, player):
         sprite = sprites.BULLET
@@ -120,13 +125,24 @@ class InputHandler(Processor):
                 Projectile(),
                 Pos(x=x, y=pos.y),
                 Sprite(sprite=sprite),
-                CircularMovement(speed=4, angle=side.value),
+                CircularMovement(speed=self.n1, angle=side.value),
+                Movement(speed=self.n2, angle=-90),
                 Timer(20),
                 Combat(damage=combat.damage),
             )
 
     def process(self):
         for ent, (pos, combat, psprite, player) in self.world.get_components(Pos, Combat, Sprite, Player):
+            if pyxel.btn(pyxel.KEY_Q):
+                self.n2 += 1
+            if pyxel.btn(pyxel.KEY_E):
+                self.n2 -= 1
+            if pyxel.btn(pyxel.KEY_UP):
+                self.n1 += 1
+                print(self.n1)
+            if pyxel.btn(pyxel.KEY_DOWN):
+                self.n1 -= 1
+                print(self.n1)
             if pyxel.btn(pyxel.KEY_A):
                 pos.x -= 2
             if pyxel.btn(pyxel.KEY_D):
@@ -152,3 +168,5 @@ class InputHandler(Processor):
                     Pos(10, 50),
                     Timer(20)
                 )
+        else:
+            self.star_attack2(pos, combat, psprite, player)

@@ -44,6 +44,12 @@ SPHERE = [
 ]
 BULLET = [(0, 28, 0, 4, 4, Colors.BLACK)]
 BULLET2 = [(0, 24, 0, 4, 4, Colors.BLACK)]
+FIRE = [
+    (0, 40, 26, 2, 2, Colors.BLACK),
+    (0, 42, 24, 2, 2, Colors.BLACK),
+    (0, 40, 26, 2, 2, Colors.BLACK),
+    (0, 42, 26, 2, 2, Colors.BLACK),
+]
 
 NV1 = [
     (0, 32, 0, 8, 8, Colors.BLACK),
