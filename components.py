@@ -4,7 +4,7 @@ from typing import Any, Dict, Optional, Sequence
 
 class Player:
     exp: int = 0
-    exp_total: int = 10
+    exp_total: int = 25
     level: int = 1
 
 
@@ -58,6 +58,7 @@ class EnemyProjectile:
 class CircularMovement:
     speed: float = 0
     angle: float = 0
+    radius: float = 3
 
 
 @dataclass
@@ -102,6 +103,15 @@ class Gun:
 
 @dataclass
 class FourGun(Gun):
+    pass
+
+
+@dataclass
+class RotationGun(Gun):
+    inc: int = 45
+
+
+class FourRotationGun(RotationGun):
     pass
 
 

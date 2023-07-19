@@ -1,8 +1,8 @@
 import pyxel
 import sprites
 from esper import Processor
-from components import Pos, Gun, Movement, Enemy, EnemyProjectile, Sprite, Timer, Combat, Player, FourGun
-from functions import frame_cd
+from components import Pos, Gun, Movement, Enemy, EnemyProjectile, Sprite, Timer, Combat, Player, FourGun, RotationGun, FourRotationGun
+from functions import frame_cd, center_of
 from math import degrees, atan2
 
 
@@ -11,9 +11,39 @@ class Shoot(Processor):
         _, (player, _) = self.world.get_components(
             Pos, Player)[0]
 
-        for _id, (gun, pos, enemy, combat) in self.world.get_components(Gun, Pos, Enemy, Combat):
+        for _id, (gun, pos, enemy, combat, sprite) in self.world.get_components(Gun, Pos, Enemy, Combat, Sprite):
             if frame_cd(gun.cd):
-                angle = 90
+                angle = gun.angle
+                if gun.aim_target:
+                    dx = pos.x - player.x
+                    dy = pos.y - player.y
+                    angle = - degrees(atan2(dx, dy)) - 90
+
+                x, y = center_of(sprite, pos)
+                self.world.create_entity(
+                    EnemyProjectile(),
+                    Pos(*center_of(sprite, pos)),
+                    Sprite(sprite=sprites.BULLET2),
+                    Movement(speed=gun.speed, angle=angle),
+                    Timer(gun.timer),
+                    Combat(damage=combat.damage),
+                )
+
+        for _id, (gun, pos, enemy, combat, sprite) in self.world.get_components(FourGun, Pos, Enemy, Combat, Sprite):
+            if frame_cd(gun.cd):
+                for angle in range(0, 360, 90):
+                    self.world.create_entity(
+                        EnemyProjectile(),
+                        Pos(*center_of(sprite, pos)),
+                        Sprite(sprite=sprites.BULLET2),
+                        Movement(speed=gun.speed, angle=angle),
+                        Timer(gun.timer),
+                        Combat(damage=combat.damage),
+                    )
+
+        for _id, (gun, pos, enemy, combat, sprite) in self.world.get_components(RotationGun, Pos, Enemy, Combat, Sprite):
+            if frame_cd(gun.cd):
+                angle = gun.angle
                 if gun.aim_target:
                     dx = pos.x - player.x
                     dy = pos.y - player.y
@@ -21,27 +51,28 @@ class Shoot(Processor):
 
                 self.world.create_entity(
                     EnemyProjectile(),
-                    Pos(x=pos.x, y=pos.y),
+                    Pos(*center_of(sprite, pos)),
                     Sprite(sprite=sprites.BULLET2),
-                    Movement(speed=2, angle=angle),
-                    Timer(55),
+                    Movement(speed=gun.speed, angle=angle),
+                    Timer(gun.timer),
                     Combat(damage=combat.damage),
                 )
+                if gun.inc:
+                    gun.angle += gun.inc
 
-        for _id, (gun, pos, enemy, combat) in self.world.get_components(FourGun, Pos, Enemy, Combat):
+        for _id, (gun, pos, enemy, combat, sprite) in self.world.get_components(FourRotationGun, Pos, Enemy, Combat, Sprite):
             if frame_cd(gun.cd):
-                # angle = 90
-                # if gun.aim_target:
-                #     dx = pos.x - player.x
-                #     dy = pos.y - player.y
-                #     angle = - degrees(atan2(dx, dy)) - 90
-
                 for angle in range(0, 360, 90):
+                    x, y = center_of(sprite, pos)
+                    x -= sprites.BULLET2[0][3] // 2
+                    y -= sprites.BULLET2[0][4] // 2
                     self.world.create_entity(
                         EnemyProjectile(),
-                        Pos(x=pos.x, y=pos.y),
+                        Pos(x, y),
                         Sprite(sprite=sprites.BULLET2),
-                        Movement(speed=2, angle=angle),
+                        Movement(speed=gun.speed, angle=angle + gun.angle),
                         Timer(gun.timer),
                         Combat(damage=combat.damage),
                     )
+            if gun.inc:
+                gun.angle += gun.inc

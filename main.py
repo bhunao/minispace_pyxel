@@ -11,7 +11,7 @@ class App:
     def __init__(self) -> None:
         pyxel.init(220, 180)
         pyxel.load("assets.pyxres")
-        # pyxel.playm(0, loop=True)
+        pyxel.playm(0, loop=True)
 
         self.world = esper.World()
         self.world.add_processor(processors.Draw())

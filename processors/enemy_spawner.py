@@ -15,7 +15,7 @@ class EnemySpawner(Processor):
         if self.wave_n < waves_size:
             func, args, quantity, spawn_next = self.waves[self.wave_n]
             for _ in range(quantity):
-                func(self.world.create_entity)
+                func(self.world.create_entity, *args)
             self.wave_n += 1
             if spawn_next:
                 self.spawn_wave()
