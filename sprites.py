@@ -42,8 +42,11 @@ SPHERE = [
     (0, 0, 8, 8, 8, Colors.BLACK),
     (0, 8, 8, 8, 8, Colors.BLACK),
 ]
-BULLET = [(0, 28, 0, 4, 4, Colors.BLACK)]
-BULLET2 = [(0, 24, 0, 4, 4, Colors.BLACK)]
+BULLET = [(0, 36, 8, 4, 4, Colors.BLACK)]
+BULLET2 = [(0, 32, 8, 4, 4, Colors.BLACK)]
+LASER = [(0, 36, 12, 4, 4, Colors.BLACK)]
+LASER2 = [(0, 32, 12, 4, 4, Colors.BLACK)]
+
 FIRE = [
     (0, 40, 26, 2, 2, Colors.BLACK),
     (0, 42, 24, 2, 2, Colors.BLACK),
@@ -79,106 +82,9 @@ E6 = [
     (0, 16, 96, 16, 16, Colors.BLACK),
 ]
 
-
 STARS = [
     (0, 0, 80, 4, 4, Colors.BLACK),
     (0, 4, 80, 4, 4, Colors.BLACK),
     (0, 0, 84, 4, 4, Colors.BLACK),
     (0, 4, 84, 4, 4, Colors.BLACK),
 ]
-
-GRASS1 = [(0, 32, 64, 8, 8, Colors.WHITE),]
-GRASS2 = [(0, 40, 64, 8, 8, Colors.WHITE),]
-GRASS3 = [(0, 32, 72, 8, 8, Colors.WHITE),]
-GRASS4 = [(0, 40, 72, 8, 8, Colors.WHITE),]
-WATER1 = [(0, 32, 32, 8, 8, Colors.WHITE),]
-WATER2 = [(0, 40, 32, 8, 8, Colors.WHITE),]
-WATER3 = [(0, 32, 40, 8, 8, Colors.WHITE),]
-WATER4 = [(0, 40, 40, 8, 8, Colors.WHITE),]
-GRASS = [(0, 32, 0, 8, 8, Colors.WHITE)]
-TREE = [(0, 40, 0, 8, 8, Colors.WHITE)]
-PORTAL = [
-    (0, 32, 8, 8, 8, Colors.WHITE),
-    (0, 40, 8, 8, 8, Colors.WHITE),
-]
-ENEMY1 = [
-    (0, 0, 48, 8, 8, Colors.WHITE),
-    (0, 8, 48, 8, 8, Colors.WHITE),
-    (0, 0, 56, 8, 8, Colors.WHITE),
-    (0, 8, 56, 8, 8, Colors.WHITE),
-]
-ENEMY2 = {
-    LEFT: [(0, 32, 0, 16, 16, 1)],
-    RIGHT: [(0, 32, 16, 16, 16, 1)],
-    UP: [(0, 48, 16, 16, 16, 1)],
-    DOWN: [(0, 48, 16, 16, 16, 1)],
-}
-ATTACK = [
-    (0, 0, 0, 8, 8, 0),
-    (0, 8, 0, 8, 8, 0),
-    (0, 0, 8, 8, 8, 0),
-    (0, 8, 8, 8, 8, 0),
-]
-CYCLONE = [
-    (0, 0, 40, 8, 8, Colors.BLACK),
-    (0, 0, 48, 8, 8, Colors.BLACK),
-    (0, 8, 32, 8, -8, Colors.BLACK),
-    (0, 0, 48, -8, 8, Colors.BLACK),
-    (0, 0, 40, -8, 8, Colors.BLACK),
-    (0, 0, 32, -8, 8, Colors.BLACK),
-    (0, 8, 32, 8, 8, Colors.BLACK),
-    (0, 0, 32, 8, 8, Colors.BLACK),
-]
-ARROW = [
-    (0, 0, 24, 8, 5, Colors.WHITE),
-    (0, 0, 24, -8, 5, Colors.WHITE),
-    (0, 0, 16, 5, -8, Colors.WHITE),
-    (0, 0, 16, 5, 8, Colors.WHITE),
-]
-FIREBALL = {
-    LEFT: ((0, 8, 24, 8, 5, 7),),
-    RIGHT: ((0, 0, 0, 8, 8, Colors.BLACK),),
-    DOWN: ((0, 8, 16, 5, -8, 7),),
-    UP: ((0, 8, 16, 5, 8, 7),),
-}
-EXP_ORB = [
-    (0, 16, 16, 8, 8, 15),
-    (0, 24, 16, 8, 8, 15),
-    (0, 16, 24, 8, 8, 15),
-    (0, 24, 24, 8, 8, 15)
-]
-
-
-MAGE = {
-    LEFT: ((0, 16, 0, -8, 8, 7),),
-    RIGHT: ((0, 16, 0, 8, 8, 7),),
-    UP: ((0, 16, 0, 8, 8, 7),),
-    DOWN: ((0, 16, 0, 8, 8, 7),),
-}
-
-WARRIOR = {
-    LEFT: ((0, 16, 8, -8, 8, 7),),
-    RIGHT: ((0, 16, 8, 8, 8, 7),),
-    UP: ((0, 16, 8, 8, 8, 7),),
-    DOWN: ((0, 16, 8, 8, 8, 7),),
-}
-
-ARCHER = {
-    LEFT: ((0, 16, 16, -8, 8, 7),),
-    RIGHT: ((0, 16, 16, 8, 8, 7),),
-    UP: ((0, 16, 16, 8, 8, 7),),
-    DOWN: ((0, 16, 16, 8, 8, 7),),
-}
-
-PLAYER = {
-    LEFT: ((0, 0, 8, 8, 8, Colors.WHITE),),
-    RIGHT: ((0, 8, 8, 8, 8, Colors.WHITE),),
-    UP: ((0, 8, 0, 8, 8, Colors.WHITE),),
-    DOWN: ((0, 0, 0, 8, 8, Colors.WHITE),),
-}
-ENEMIE1 = {
-    LEFT: ((0, 0, 0, 8, 8, Colors.WHITE),),
-    RIGHT: ((0, 0, 0, 8, 8, Colors.WHITE),),
-    UP: ((0, 0, 0, 8, 8, Colors.WHITE),),
-    DOWN: ((0, 24, 0, 8, 8, 1),),
-}
