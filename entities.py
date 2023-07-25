@@ -40,7 +40,7 @@ def enemy1(create_entity, x=None, y=None):
             x=x if x else _x,
             y=y if y else pyxel.rndi(-64, - 16),
         ),
-        MoveToPlayer(speed=1),
+        MoveToPlayer(speed=.5),
         Enemy(),
         Combat(hp=hp, max_hp=hp, damage=1),
     )
@@ -59,7 +59,7 @@ def enemy2(create_entity, x=None, y=None):
             x=x,
             y=y if y else pyxel.rndi(-64, - 16),
         ),
-        MoveToPlayer(speed=1),
+        MoveToPlayer(speed=.5),
         Enemy(),
         Combat(hp=hp, max_hp=hp, damage=2),
         Gun(speed=3, angle=90, aim_target=True, cd=4),
@@ -78,7 +78,7 @@ def enemy3(create_entity, x=None, y=None):
             x=x if x else _x,
             y=y if y else -16,
         ),
-        Movement(speed=1, angle=90),
+        Movement(speed=.5, angle=90),
         Enemy(),
         Combat(hp=hp, max_hp=hp, damage=3),
         Gun(speed=2, angle=90, cd=50),
@@ -142,7 +142,7 @@ def rotationer_gunner(create_entity, x=None, y=None):
             x=x if x else _x,
             y=y if y else -16,
         ),
-        Movement(speed=1, angle=90),
+        Movement(speed=.5, angle=90),
         Enemy(),
         Combat(hp=hp, max_hp=hp, damage=1),
         RotationGun(speed=2, angle=90, cd=5, timer=50),
@@ -160,13 +160,13 @@ def slow_walker(create_entity, x=None, y=None):
             x=x if x else _x,
             y=y if y else pyxel.rndi(-64, - 16),
         ),
-        Movement(speed=1, angle=90),
+        Movement(speed=.5, angle=90),
         Enemy(),
         Combat(hp=hp, max_hp=hp, damage=1),
     )
 
 
-def spinning_jack(create_entity, x=None, y=None, speed=1):
+def spinning_jack(create_entity, x=None, y=None):
     _x, _y = rndxy()
     hp = 3
     return create_entity(
@@ -177,15 +177,15 @@ def spinning_jack(create_entity, x=None, y=None, speed=1):
             x=x if x else _x,
             y=y if y else pyxel.rndi(-64, - 16),
         ),
-        CircularMovement(speed=speed, radius=7),
-        Movement(speed=speed, angle=90*speed),
+        CircularMovement(speed=.5, radius=7),
+        Movement(speed=.5, angle=90),
         Gun(speed=2, aim_target=True, cd=15, timer=100),
         Enemy(),
         Combat(hp=hp, max_hp=hp, damage=1),
     )
 
 
-def spiral_daniel(create_entity, x=None, y=None, speed=1):
+def spiral_daniel(create_entity, x=None, y=None, speed=.5):
     _x, _y = rndxy()
     hp = 3
     return create_entity(
@@ -199,5 +199,23 @@ def spiral_daniel(create_entity, x=None, y=None, speed=1):
         Movement(speed=speed, angle=90),
         FourRotationGun(speed=2, cd=2, inc=5, timer=15),
         Enemy(),
+        Combat(hp=hp, max_hp=hp, damage=1),
+    )
+
+
+def slow_shooter(create_entity, x=None, y=None):
+    _x, _y = rndxy()
+    hp = 3
+    return create_entity(
+        Sprite(
+            sprite=sprites.SPHERE
+        ),
+        Pos(
+            x=x if x else _x,
+            y=y if y else pyxel.rndi(-64, - 16),
+        ),
+        MoveToPlayer(speed=.5),
+        Enemy(),
+        Gun(speed=2, aim_target=True, cd=25, timer=100),
         Combat(hp=hp, max_hp=hp, damage=1),
     )

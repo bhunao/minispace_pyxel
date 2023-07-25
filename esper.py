@@ -121,6 +121,9 @@ class Processor:
     priority = 0
     world: "World"
 
+    def get_components(self, *components):
+        return self.world.get_components(*components)
+
     def process(self, *args, **kwargs):
         raise NotImplementedError
 
@@ -439,7 +442,8 @@ class World:
         for processor in self._processors:
             start_time = _time.process_time()
             processor.process(*args, **kwargs)
-            process_time = int(round((_time.process_time() - start_time) * 1000, 2))
+            process_time = int(
+                round((_time.process_time() - start_time) * 1000, 2))
             self.process_times[processor.__class__.__name__] = process_time
 
     def process(self, *args, **kwargs):

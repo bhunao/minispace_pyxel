@@ -162,7 +162,7 @@ class InputHandler(Processor):
             if pyxel.btnp(pyxel.KEY_5):
                 self.player_attack = self.zigzag_attack
             if pyxel.btnp(pyxel.KEY_1):
-                entities.spiral_daniel(self.world.create_entity)
+                entities.spinning_jack(self.world.create_entity)
                 self.world.create_entity(
                     Text("spinning_jack"),
                     Pos(10, 50),

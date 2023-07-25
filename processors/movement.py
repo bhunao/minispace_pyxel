@@ -1,6 +1,8 @@
 import pyxel
 from esper import Processor
-from components import Pos, Player, Movement, CircularMovement, Enemy, MoveToPlayer, Star, MoveXtoPlayer, CircileNearTarget, Sprite
+from components import (Pos, Player, Movement, CircularMovement,
+                        MoveToPlayer, Star, MoveXtoPlayer, CircileNearTarget,
+                        Sprite, Projectile)
 from math import cos, sin, radians, degrees, atan2, sqrt
 from functions import center_of
 
@@ -10,27 +12,32 @@ class Move(Processor):
         _, (player, p_sprite, _) = self.world.get_components(
             Pos, Sprite, Player)[0]
         player = Pos(*center_of(p_sprite, player))
-        for _id, (pos, movement, sprite) in self.world.get_components(Pos, MoveToPlayer, Sprite):
+        for _, components in self.get_components(Pos, MoveToPlayer, Sprite):
+            pos, movement, sprite = components
             self.move_to_target(pos, movement, sprite, target=player)
             self.move(pos, movement)
 
-        for _id, (pos, movement) in self.world.get_components(Pos, Movement):
+        for _, components in self.get_components(Pos, Movement):
+            pos, movement = components
             self.move(pos, movement)
 
-        for _id, (pos, movement) in self.world.get_components(Pos, CircularMovement):
+        for _, components in self.get_components(Pos, CircularMovement):
+            pos, movement = components
             self.move_circular(pos, movement)
 
-        for _id, (pos, movement, sprite) in self.world.get_components(Pos, MoveXtoPlayer, Sprite):
+        for _, components in self.get_components(Pos, MoveXtoPlayer, Sprite):
+            pos, movement, sprite = components
             self.move_to_target(pos, movement, sprite, target=player)
             angle_rad = radians(movement.angle)
             pos.x += cos(angle_rad) * movement.speed
             pos.y += 1 if pos.y < 30 else 0
 
-        for _id, (pos, movement, sprite) in self.world.get_components(Pos, CircileNearTarget, Sprite):
+        for _, components in self.get_components(Pos, CircileNearTarget, Sprite):
+            pos, movement, sprite = components
             self.move_keep_distance(pos, movement, sprite, player)
             self.move(pos, movement)
 
-        for _id, (pos, movement, _) in self.world.get_components(Pos, Movement, Star):
+        for _, (pos, movement, _) in self.get_components(Pos, Movement, Star):
             mid = pyxel.width // 2
             diff = player.x - mid
             pos.x -= diff // 70
@@ -38,6 +45,11 @@ class Move(Processor):
             if pos.y > pyxel.height + 15:
                 pos.y = 0 - pyxel.frame_count % 25
                 pos.x = pyxel.rndi(0, pyxel.width)
+
+        for id, components in self.get_components(Projectile, Pos):
+            _, pos = components
+            if pos.y < -4 or pos.y > pyxel.height+4:
+                self.world.delete_entity(id)
 
     @staticmethod
     def move_circular(pos, movement):
