@@ -1,13 +1,74 @@
 import pyxel
+from processors.input import InputHandler
+import sprites
 from esper import Processor
-from components import Pos, Sprite, Combat, Player, Enemy, Text, Movement, Timer, Projectile, Circle, EnemyProjectile
+from items import Items
+from components import (Pos, Sprite, Combat, Player, Enemy,
+                        Text, Movement, Timer, Projectile, Circle,
+                        EnemyProjectile, Item)
 from math import pi
+from random import choice
 
 
 class Collission(Processor):
+    def display_dmg(self, pos, combat):
+        self.world.create_entity(
+            Text(str(combat.damage)),
+            Pos(pos.x, pos.y),
+            Movement(speed=1, angle=-90),
+            Timer(25),
+        )
+
+    def create_item(self, pos, item=None):
+        item = choice([*Items])
+        sprite = sprites.HEART if item == Items.heart else sprites.PLUS_ONE
+        self.world.create_entity(
+            Item(item),
+            Pos(pos.x, pos.y),
+            Sprite(sprite),
+            Timer(150),
+            Movement(1, angle=90),
+        )
+
+    def level_up(self, player, pos, combat):
+        if player.exp >= player.exp_total:
+            player.exp = player.exp_total - player.exp
+            player.exp_total = int(player.exp_total*pi)
+            player.level += 1
+            combat.hp = combat.max_hp
+            self.world.create_entity(
+                Text("LVL UP!"),
+                Pos(pos.x, pos.y),
+                Movement(speed=1, angle=-90),
+                Timer(25),
+            )
+            self.world.create_entity(
+                Circle(r_inc=1),
+                Pos(pos.x, pos.y),
+                Timer(50),
+            )
+            self.world.create_entity(
+                Circle(r_inc=2),
+                Pos(pos.x, pos.y),
+                Timer(25),
+            )
+
     def process(self):
         pid, (playerpos, playersprite, playercombat, player) = self.world.get_components(
             Pos, Sprite, Combat, Player)[0]
+
+        for iid, components in self.get_components(Item, Pos, Sprite):
+            item, ipos, isprite = components
+            if self.collide_with(ipos, isprite, playerpos, playersprite):
+                input_handler = InputHandler()
+                if item.item == Items.heart:
+                    playercombat.hp += 1
+                else:
+                    input_handler.attack_style = item.item
+                    self.world.remove_processor(InputHandler)
+                    self.world.add_processor(input_handler)
+
+                self.world.delete_entity(iid)
 
         for eid, (pos, sprite) in self.world.get_components(Pos, Sprite):
             if pid == eid:
@@ -17,12 +78,7 @@ class Collission(Processor):
         eprojcetile_components = Pos, Sprite, Combat, EnemyProjectile
         for epid, (eppos, epsprite, epcombat, _) in self.world.get_components(*eprojcetile_components):
             if self.collide_with(eppos, epsprite, playerpos, playersprite):
-                self.world.create_entity(
-                    Text(str(epcombat.damage)),
-                    Pos(playerpos.x, playerpos.y),
-                    Movement(speed=1, angle=-90),
-                    Timer(25),
-                )
+                self.display_dmg(playerpos, epcombat)
                 self.world.delete_entity(epid)
                 self.attack(epcombat, playercombat)
 
@@ -32,54 +88,18 @@ class Collission(Processor):
             for eid, (epos, esprite, ecombat, enemy) in self.world.get_components(*enemy_components):
                 if self.collide_with(ppos, psprite, epos, esprite):
                     self.world.delete_entity(pid)
-                    self.world.create_entity(
-                        Text(str(pcombat.damage)),
-                        Pos(epos.x, epos.y),
-                        Movement(speed=1, angle=-90),
-                        Timer(25),
-                    )
+                    self.display_dmg(epos, pcombat)
                     if self.attack(pcombat, ecombat, eid):
                         player.exp += enemy.exp
-
-                    if player.exp >= player.exp_total:
-                        player.exp = player.exp_total - player.exp
-                        player.exp_total = int(player.exp_total*pi)
-                        player.level += 1
-                        playercombat.damage += 1
-                        playercombat.max_hp += 1
-                        playercombat.hp = playercombat.max_hp
-                        self.world.create_entity(
-                            Text("LVL UP!"),
-                            Pos(playerpos.x, playerpos.y),
-                            Movement(speed=1, angle=-90),
-                            Timer(25),
-                        )
-                        self.world.create_entity(
-                            Circle(r_inc=1),
-                            Pos(playerpos.x, playerpos.y),
-                            Timer(25),
-                        )
-                        self.world.create_entity(
-                            Circle(r_inc=2),
-                            Pos(playerpos.x, playerpos.y),
-                            Timer(25),
-                        )
-                        self.world.create_entity(
-                            Circle(r_inc=3),
-                            Pos(playerpos.x, playerpos.y),
-                            Timer(25),
-                        )
+                        self.level_up(player, playerpos, playercombat)
+                        if pyxel.rndi(0, 15) == 0:
+                            self.create_item(epos)
 
         enemy_components = Pos, Sprite, Combat, Enemy
         for eid, (epos, esprite, ecombat, enemy) in self.world.get_components(*enemy_components):
             if self.collide_with(epos, esprite, playerpos, playersprite):
                 if self.attack(ecombat, playercombat):
-                    self.world.create_entity(
-                        Text(str(ecombat.damage), 7),
-                        Pos(epos.x, epos.y),
-                        Movement(speed=1, angle=-90),
-                        Timer(25),
-                    )
+                    self.display_dmg(epos, ecombat)
 
     def attack(self, combat1: Combat, combat2: Combat, combat2_id=None):
         combat2.hp -= combat1.damage

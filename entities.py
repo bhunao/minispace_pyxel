@@ -1,32 +1,9 @@
 import pyxel
-from esper import Processor
-from components import Pos, Sprite, Combat, Player, Enemy, Movement, Gun, FourGun, HPBar, MoveToPlayer, MoveXtoPlayer, CircileNearTarget, RotationGun, FourRotationGun, CircularMovement
-from sprites import WARRIOR, DOWN
+from components import (Pos, Sprite, Combat, Enemy, Movement, Gun, HPBar,
+                        MoveToPlayer, MoveXtoPlayer, RotationGun,
+                        FourRotationGun, CircularMovement)
 import sprites
-from functions import rndxy, frame_cd
-
-
-class EnemyBuilder:
-    def __init__(self):
-        self.wave: int = 0
-        self.spawned: bool = False
-        self.waves: list = [
-            [enemy1, (50, 50), 3],
-            [enemy1, (50, 50), 5],
-            [enemy2, (50, 50), 3],
-            [enemy3, (50, 50), 2],
-            [enemy4, (50, 50), 1],
-        ]
-
-    def wave_spawn(self, create_entity):
-        if self.wave >= len(self.waves):
-            return
-
-        if not self.spawned:
-            func, args, quantity = self.waves[self.wave]
-            for _ in range(quantity):
-                func(create_entity)
-            self.wave += 1
+from functions import rndxy
 
 
 def enemy1(create_entity, x=None, y=None):
@@ -123,7 +100,7 @@ def rotational_boss(create_entity, x=None, y=None):
             y=y if y else pyxel.rndi(-64, - 16),
         ),
         MoveXtoPlayer(speed=5),
-        Enemy(),
+        Enemy(exp=10),
         Combat(hp=hp,
                max_hp=hp, damage=4),
         FourRotationGun(speed=2, cd=4, inc=5, timer=350),
@@ -143,7 +120,7 @@ def rotationer_gunner(create_entity, x=None, y=None):
             y=y if y else -16,
         ),
         Movement(speed=.5, angle=90),
-        Enemy(),
+        Enemy(exp=3),
         Combat(hp=hp, max_hp=hp, damage=1),
         RotationGun(speed=2, angle=90, cd=5, timer=50),
     )
@@ -180,7 +157,7 @@ def spinning_jack(create_entity, x=None, y=None):
         CircularMovement(speed=.5, radius=7),
         Movement(speed=.5, angle=90),
         Gun(speed=2, aim_target=True, cd=15, timer=100),
-        Enemy(),
+        Enemy(exp=5),
         Combat(hp=hp, max_hp=hp, damage=1),
     )
 
@@ -198,7 +175,7 @@ def spiral_daniel(create_entity, x=None, y=None, speed=.5):
         ),
         Movement(speed=speed, angle=90),
         FourRotationGun(speed=2, cd=2, inc=5, timer=15),
-        Enemy(),
+        Enemy(exp=5),
         Combat(hp=hp, max_hp=hp, damage=1),
     )
 
@@ -208,14 +185,14 @@ def slow_shooter(create_entity, x=None, y=None):
     hp = 3
     return create_entity(
         Sprite(
-            sprite=sprites.SPHERE
+            sprite=sprites.SPHERE2
         ),
         Pos(
             x=x if x else _x,
             y=y if y else pyxel.rndi(-64, - 16),
         ),
         MoveToPlayer(speed=.5),
-        Enemy(),
+        Enemy(exp=2),
         Gun(speed=2, aim_target=True, cd=25, timer=100),
         Combat(hp=hp, max_hp=hp, damage=1),
     )

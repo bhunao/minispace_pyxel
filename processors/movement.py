@@ -1,6 +1,6 @@
 import pyxel
 from esper import Processor
-from components import (Pos, Player, Movement, CircularMovement,
+from components import (MoveF, Pos, Player, Movement, CircularMovement,
                         MoveToPlayer, Star, MoveXtoPlayer, CircileNearTarget,
                         Sprite, Projectile)
 from math import cos, sin, radians, degrees, atan2, sqrt
@@ -37,6 +37,10 @@ class Move(Processor):
             self.move_keep_distance(pos, movement, sprite, player)
             self.move(pos, movement)
 
+        for _, components in self.get_components(Pos, MoveF, Sprite):
+            pos, movement, sprite = components
+            self.f(pos, movement)
+
         for _, (pos, movement, _) in self.get_components(Pos, Movement, Star):
             mid = pyxel.width // 2
             diff = player.x - mid
@@ -48,8 +52,19 @@ class Move(Processor):
 
         for id, components in self.get_components(Projectile, Pos):
             _, pos = components
-            if pos.y < -4 or pos.y > pyxel.height+4:
+            if int(pos.y) not in range(0, pyxel.height):
                 self.world.delete_entity(id)
+
+    @staticmethod
+    def f(pos, movement, n1=3, n2=2):
+        x = movement.step
+        movement.step += 1
+        z = x - 20
+        y = (n1 / n2 * z ** 2)*.05 - 10
+        angle_rad = radians(movement.angle)
+        pos.x += y / 5
+        pos.y += sin(angle_rad)
+        print(y)
 
     @staticmethod
     def move_circular(pos, movement):

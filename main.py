@@ -34,7 +34,7 @@ class App:
                 x=pyxel.width//2,
                 y=pyxel.height//2,
             ),
-            Player(),
+            Player(level=8),
             Combat(hp=5, max_hp=5, damage=1)
         )
 

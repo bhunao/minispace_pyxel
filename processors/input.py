@@ -1,45 +1,45 @@
 import pyxel
+from items import Items
 import sprites
 from esper import Processor
-from components import Projectile, Pos, Sprite, CircularMovement, Timer, Combat, Enemy, Movement, Player, Text, CircularMovement, MoveXtoPlayer
+from components import (MoveF, Projectile, Pos, Sprite, CircularMovement, Timer,
+                        Combat, Movement, Player, Text, MoveXtoPlayer)
 from functions import frame_cd
 from sprites import Sides
-from math import degrees, atan2, cos, sin
+from math import sin
 import entities
 
 
 class InputHandler(Processor):
     def __init__(self) -> None:
         super().__init__()
-        self.player_attack = self.normal_attack
+        self.attack_style: Items = Items.normal_attack
         self.n1 = 1
         self.n2 = 1
 
-    def star_attack2(self, pos, combat, psprite, player):
-        sprite = sprites.BULLET
-        for angle in range(0, 360, 45):
-            # for side in Sides:
-            sprite = sprites.FIRE[0:pyxel.rndi(1, 3)]
-            x = pos.x + psprite.w//2 - sprite[0][3] // 2
-            self.world.create_entity(
-                Projectile(),
-                Pos(x=x, y=pos.y+5),
-                Sprite(sprite=sprite),
-                CircularMovement(speed=-1, angle=angle),
-                Movement(speed=pyxel.rndi(-3, -4), angle=-90),
-                Timer(pyxel.rndi(5, 10)),
-                Combat(damage=combat.damage),
-            )
+    def player_attack(self, pos, combat, psprite, player):
+        match self.attack_style:
+            case Items.normal_attack:
+                return self.normal_attack(pos, combat, psprite, player)
+            case Items.spray_attack:
+                return self.spray_attack(pos, combat, psprite, player)
+            case Items.zizag_attack:
+                return self.zigzag_attack(pos, combat, psprite, player)
+            case Items.star_attack:
+                return self.star_attack(pos, combat, psprite, player)
 
     def zigzag_attack(self, pos, combat, psprite, player):
-        sprite = sprites.BULLET
+        if not frame_cd(15):
+            return
+
+        sprite = sprites.LASER2
         x = pos.x + psprite.w//2 - sprite[0][3] // 2
         angle = -65
 
         self.world.create_entity(
             Projectile(),
             Pos(x=x, y=pos.y),
-            Sprite(sprite=sprites.BULLET),
+            Sprite(sprite=sprite),
             Movement(speed=3, angle=angle),
             MoveXtoPlayer(speed=3, angle=angle),
             CircularMovement(speed=2, angle=angle),
@@ -50,7 +50,7 @@ class InputHandler(Processor):
             self.world.create_entity(
                 Projectile(),
                 Pos(x=x, y=pos.y),
-                Sprite(sprite=sprites.BULLET),
+                Sprite(sprite=sprite),
                 Movement(speed=3, angle=angle+plusangle),
                 MoveXtoPlayer(speed=3),
                 CircularMovement(speed=1, angle=plusangle),
@@ -59,30 +59,24 @@ class InputHandler(Processor):
             )
 
     def spray_attack(self, pos, combat, psprite, player):
+        # if not frame_cd(5):
+        # return
+
         sprite = sprites.BULLET
         x = pos.x + psprite.w//2 - sprite[0][3] // 2
         angle = sin(pyxel.frame_count % 90) * 15
         angle -= 90
 
-        self.world.create_entity(
-            Projectile(),
-            Pos(x=x, y=pos.y),
-            Sprite(sprite=sprites.BULLET),
-            Movement(speed=4, angle=angle),
-            Timer(45),
-            Combat(damage=combat.damage),
-        )
+        for n in range(player.level):
+            mult = 1 if angle > -90 else -1
+            diff = pyxel.rndi(-6, 6) * n * mult
 
-    def tst(self, pos, combat, psprite, player):
-        for side in Sides:
-            sprite = sprites.BULLET
-            x = pos.x + psprite.w//2 - sprite[0][3] // 2
             self.world.create_entity(
                 Projectile(),
                 Pos(x=x, y=pos.y),
-                Sprite(sprite=sprite),
-                CircularMovement(speed=4, angle=side.value),
-                Timer(20),
+                Sprite(sprite=sprites.LASER),
+                MoveF(speed=3, angle=angle),
+                Timer(45),
                 Combat(damage=combat.damage),
             )
 
@@ -117,16 +111,18 @@ class InputHandler(Processor):
             )
 
     def star_attack(self, pos, combat, psprite, player):
+        if not frame_cd(15):
+            return
         sprite = sprites.BULLET
         for side in Sides:
-            sprite = sprites.BULLET
+            sprite = sprites.LASER
             x = pos.x + psprite.w//2 - sprite[0][3] // 2
             self.world.create_entity(
                 Projectile(),
                 Pos(x=x, y=pos.y),
                 Sprite(sprite=sprite),
-                CircularMovement(speed=self.n1, angle=side.value),
-                Movement(speed=self.n2, angle=-90),
+                CircularMovement(speed=1, angle=side.value),
+                Movement(speed=4, angle=-90),
                 Timer(20),
                 Combat(damage=combat.damage),
             )
@@ -154,13 +150,13 @@ class InputHandler(Processor):
             if pyxel.btn(pyxel.KEY_SPACE):
                 self.player_attack(pos, combat, psprite, player)
             if pyxel.btnp(pyxel.KEY_2):
-                self.player_attack = self.normal_attack
+                self.attack_style = Items.normal_attack
             if pyxel.btnp(pyxel.KEY_3):
-                self.player_attack = self.spray_attack
+                self.attack_style = Items.spray_attack
             if pyxel.btnp(pyxel.KEY_4):
-                self.player_attack = self.star_attack
+                self.attack_style = Items.star_attack
             if pyxel.btnp(pyxel.KEY_5):
-                self.player_attack = self.zigzag_attack
+                self.attack_style = Items.zizag_attack
             if pyxel.btnp(pyxel.KEY_1):
                 entities.spinning_jack(self.world.create_entity)
                 self.world.create_entity(
@@ -168,5 +164,3 @@ class InputHandler(Processor):
                     Pos(10, 50),
                     Timer(20)
                 )
-        else:
-            self.star_attack2(pos, combat, psprite, player)

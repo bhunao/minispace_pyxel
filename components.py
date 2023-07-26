@@ -1,11 +1,19 @@
 from dataclasses import dataclass
 from typing import Any, Dict, Optional, Sequence
 
+from items import Items
 
+
+@dataclass
 class Player:
     exp: int = 0
     exp_total: int = 25
     level: int = 1
+
+
+@dataclass
+class Item:
+    item: Items = Items.heart
 
 
 @dataclass
@@ -41,6 +49,7 @@ class Combat:
     damage: int = 0
 
 
+@dataclass
 class Enemy:
     exp: int = 1
     atk_cd: int = 0
@@ -65,6 +74,10 @@ class CircularMovement:
 class Movement:
     speed: float = 0
     angle: float = 0
+
+
+class MoveF(Movement):
+    step: int = 0
 
 
 class MoveToPlayer(Movement):

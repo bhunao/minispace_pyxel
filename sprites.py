@@ -42,6 +42,12 @@ SPHERE = [
     (0, 0, 8, 8, 8, Colors.BLACK),
     (0, 8, 8, 8, 8, Colors.BLACK),
 ]
+SPHERE2 = [
+    (0, 16, 0, 8, 8, Colors.BLACK),
+    (0, 24, 0, 8, 8, Colors.BLACK),
+    (0, 16, 8, 8, 8, Colors.BLACK),
+    (0, 24, 8, 8, 8, Colors.BLACK),
+]
 BULLET = [(0, 36, 8, 4, 4, Colors.BLACK)]
 BULLET2 = [(0, 32, 8, 4, 4, Colors.BLACK)]
 LASER = [(0, 36, 12, 4, 4, Colors.BLACK)]
@@ -87,4 +93,13 @@ STARS = [
     (0, 4, 80, 4, 4, Colors.BLACK),
     (0, 0, 84, 4, 4, Colors.BLACK),
     (0, 4, 84, 4, 4, Colors.BLACK),
+]
+
+PLUS_ONE = [
+    (0, 32, 48, 8, 8, Colors.BLACK),
+    (0, 32, 56, 8, 8, Colors.BLACK),
+]
+HEART = [
+    (0, 40, 48, 8, 8, Colors.BLACK),
+    (0, 40, 56, 8, 8, Colors.BLACK),
 ]

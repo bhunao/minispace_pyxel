@@ -21,10 +21,12 @@ class EnemySpawner(Processor):
                 self.spawn_wave()
 
     def process(self):
-        enemy_len = len(self.world.get_components(Enemy))
-        if enemy_len == 0:
-            self.spawn_wave()
-
         for eid, (pos, _) in self.world.get_components(Pos, Enemy):
             if pos.y > pyxel.height + 64:
                 self.world.delete_entity(eid)
+
+        for _, comps in self.get_components(Enemy, Pos):
+            _, pos = comps
+            if pos.y < 100:
+                return
+        self.spawn_wave()
