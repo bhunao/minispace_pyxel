@@ -103,3 +103,6 @@ HEART = [
     (0, 40, 48, 8, 8, Colors.BLACK),
     (0, 40, 56, 8, 8, Colors.BLACK),
 ]
+PLANET = [
+    (0, 48, 0, 32, 32, Colors.BLACK),
+]

@@ -1,5 +1,5 @@
 import sprites
-from components import (Player, Sprite, Pos, Combat, Star, Movement)
+from components import (Circle, Player, Sprite, Pos, Combat, Star, Movement)
 from functions import rndxy
 import processors
 
@@ -11,7 +11,7 @@ class App:
     def __init__(self) -> None:
         pyxel.init(220, 180)
         pyxel.load("assets.pyxres")
-        pyxel.playm(0, loop=True)
+        # pyxel.playm(0, loop=True)
 
         self.world = esper.World()
         self.world.add_processor(processors.Draw())
@@ -36,6 +36,12 @@ class App:
             ),
             Player(level=8),
             Combat(hp=5, max_hp=5, damage=1)
+        )
+        self.world.create_entity(
+            Sprite(sprites.PLANET),
+            Pos(50, 50),
+            Movement(0.05, angle=90),
+            Circle(10, f=lambda x: pyxel.sin(x) * .3 + .5)
         )
 
         for _ in range(125):

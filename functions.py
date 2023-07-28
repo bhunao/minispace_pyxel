@@ -1,5 +1,6 @@
 import pyxel
 from components import Sprite, Pos
+from math import sqrt
 
 
 def rainbow():
@@ -18,3 +19,9 @@ def center_of(sprite: Sprite, pos: Pos):
     x = pos.x
     y = pos.y
     return x + sprite.w // 2, y + sprite.h // 2
+
+
+def distance_between(pos1: Pos, pos2: Pos):
+    n1 = (pos1.x - pos2.x)**2
+    n2 = (pos1.y - pos2.y)**2
+    return sqrt(n1 + n2)

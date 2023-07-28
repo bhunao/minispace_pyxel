@@ -2,7 +2,7 @@ import pyxel
 from items import Items
 import sprites
 from esper import Processor
-from components import (MoveF, Projectile, Pos, Sprite, CircularMovement, Timer,
+from components import (MoveF, MoveToEnemy, Projectile, Pos, Sprite, CircularMovement, Timer,
                         Combat, Movement, Player, Text, MoveXtoPlayer)
 from functions import frame_cd
 from sprites import Sides
@@ -32,29 +32,22 @@ class InputHandler(Processor):
         if not frame_cd(15):
             return
 
-        sprite = sprites.LASER2
+        sprite = sprites.LASER
         x = pos.x + psprite.w//2 - sprite[0][3] // 2
-        angle = -65
 
-        self.world.create_entity(
-            Projectile(),
-            Pos(x=x, y=pos.y),
-            Sprite(sprite=sprite),
-            Movement(speed=3, angle=angle),
-            MoveXtoPlayer(speed=3, angle=angle),
-            CircularMovement(speed=2, angle=angle),
-            Timer(45),
-            Combat(damage=combat.damage),
-        )
-        for plusangle in range(-45, 45, 15):
+        n = 35
+        start = -n
+        stop = n
+        step = (abs(start) + abs(stop)) // player.level
+        for ang_dif in range(start, stop + step, step):
             self.world.create_entity(
                 Projectile(),
                 Pos(x=x, y=pos.y),
-                Sprite(sprite=sprite),
-                Movement(speed=3, angle=angle+plusangle),
-                MoveXtoPlayer(speed=3),
-                CircularMovement(speed=1, angle=plusangle),
-                Timer(45),
+                Sprite(sprite=sprites.BULLET),
+                MoveToEnemy(speed=2, angle=-90),
+                MoveF(speed=.1, angle=-90+ang_dif,
+                      f=lambda x: sin(x) + x * .1),
+                Timer(135),
                 Combat(damage=combat.damage),
             )
 
@@ -75,7 +68,8 @@ class InputHandler(Processor):
                 Projectile(),
                 Pos(x=x, y=pos.y),
                 Sprite(sprite=sprites.LASER),
-                MoveF(speed=3, angle=angle),
+                MoveF(speed=3, angle=angle,
+                      f=lambda x: abs(pyxel.sin(x)) + 2),
                 Timer(45),
                 Combat(damage=combat.damage),
             )
@@ -111,7 +105,7 @@ class InputHandler(Processor):
             )
 
     def star_attack(self, pos, combat, psprite, player):
-        if not frame_cd(15):
+        if not frame_cd(10):
             return
         sprite = sprites.BULLET
         for side in Sides:
@@ -135,10 +129,8 @@ class InputHandler(Processor):
                 self.n2 -= 1
             if pyxel.btn(pyxel.KEY_UP):
                 self.n1 += 1
-                print(self.n1)
             if pyxel.btn(pyxel.KEY_DOWN):
                 self.n1 -= 1
-                print(self.n1)
             if pyxel.btn(pyxel.KEY_A):
                 pos.x -= 2
             if pyxel.btn(pyxel.KEY_D):

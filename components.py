@@ -1,3 +1,4 @@
+from collections.abc import Callable
 from dataclasses import dataclass
 from typing import Any, Dict, Optional, Sequence
 
@@ -34,6 +35,7 @@ class Circle:
     r: int = 10
     colkey: int = 16
     r_inc: int = 0
+    f: Optional[Callable] = None
 
 
 @dataclass
@@ -76,8 +78,15 @@ class Movement:
     angle: float = 0
 
 
+@dataclass
 class MoveF(Movement):
+    f: Optional[Callable] = None
     step: int = 0
+
+
+@dataclass
+class MoveToEnemy(Movement):
+    pass
 
 
 class MoveToPlayer(Movement):

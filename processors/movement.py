@@ -1,10 +1,10 @@
 import pyxel
 from esper import Processor
-from components import (MoveF, Pos, Player, Movement, CircularMovement,
+from components import (Enemy, MoveF, MoveToEnemy, Pos, Player, Movement, CircularMovement,
                         MoveToPlayer, Star, MoveXtoPlayer, CircileNearTarget,
                         Sprite, Projectile)
 from math import cos, sin, radians, degrees, atan2, sqrt
-from functions import center_of
+from functions import center_of, distance_between
 
 
 class Move(Processor):
@@ -16,6 +16,17 @@ class Move(Processor):
             pos, movement, sprite = components
             self.move_to_target(pos, movement, sprite, target=player)
             self.move(pos, movement)
+
+        for _, components in self.get_components(Pos, MoveToEnemy, Sprite):
+            pos, movement, sprite = components
+
+            enemy = self.world.get_components(Pos, Sprite, Enemy)
+
+            if enemy:
+                eposs = [epos for _, (epos, esprite, _) in enemy]
+                target = min(eposs, key=lambda x: distance_between(x, pos))
+                self.move_to_target(pos, movement, sprite, target=target)
+                self.move(pos, movement)
 
         for _, components in self.get_components(Pos, Movement):
             pos, movement = components
@@ -56,17 +67,6 @@ class Move(Processor):
                 self.world.delete_entity(id)
 
     @staticmethod
-    def f(pos, movement, n1=3, n2=2):
-        x = movement.step
-        movement.step += 1
-        z = x - 20
-        y = (n1 / n2 * z ** 2)*.05 - 10
-        angle_rad = radians(movement.angle)
-        pos.x += y / 5
-        pos.y += sin(angle_rad)
-        print(y)
-
-    @staticmethod
     def move_circular(pos, movement):
         angle_rad = radians(
             movement.angle + pyxel.frame_count * movement.radius)
@@ -78,6 +78,16 @@ class Move(Processor):
         angle_rad = radians(moviment.angle)
         pos.x += cos(angle_rad) * moviment.speed
         pos.y += sin(angle_rad) * moviment.speed
+
+    @staticmethod
+    def f(pos, movement):
+        if movement.f:
+            angle_rad = radians(movement.angle)
+            f_val = movement.f(movement.step)
+            print(f_val)
+            pos.x += cos(angle_rad) * f_val * movement.speed
+            pos.y += sin(angle_rad) * f_val * movement.speed
+            movement.step += 1
 
     def move_to_target(self, pos, moviment, sprite, target):
         x, y = center_of(sprite, pos)
@@ -93,9 +103,7 @@ class Move(Processor):
         moviment.angle = angle
 
     def move_keep_distance(self, pos, movement, sprite, target):
-        n1 = (pos.x - target.x)**2
-        n2 = (pos.y - target.y)**2
-        distance = sqrt(n1 + n2)
+        distance = distance_between(pos, target)
         if distance > 50:
             self.move_to_target(pos, movement, sprite, target)
         elif distance < 100:
