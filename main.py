@@ -34,14 +34,8 @@ class App:
                 x=pyxel.width//2,
                 y=pyxel.height//2,
             ),
-            Player(level=8),
+            Player(level=1),
             Combat(hp=5, max_hp=5, damage=1)
-        )
-        self.world.create_entity(
-            Sprite(sprites.PLANET),
-            Pos(50, 50),
-            Movement(0.05, angle=90),
-            Circle(10, f=lambda x: pyxel.sin(x) * .3 + .5)
         )
 
         for _ in range(125):

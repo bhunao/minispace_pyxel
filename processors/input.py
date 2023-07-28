@@ -35,25 +35,24 @@ class InputHandler(Processor):
         sprite = sprites.LASER
         x = pos.x + psprite.w//2 - sprite[0][3] // 2
 
-        n = 35
-        start = -n
-        stop = n
+        start = 0
+        stop = 360
         step = (abs(start) + abs(stop)) // player.level
-        for ang_dif in range(start, stop + step, step):
+        for ang_dif in range(start, stop, step):
             self.world.create_entity(
                 Projectile(),
                 Pos(x=x, y=pos.y),
                 Sprite(sprite=sprites.BULLET),
-                MoveToEnemy(speed=2, angle=-90),
-                MoveF(speed=.1, angle=-90+ang_dif,
+                MoveToEnemy(speed=4, angle=-90),
+                MoveF(speed=.05, angle=ang_dif,
                       f=lambda x: sin(x) + x * .1),
                 Timer(135),
                 Combat(damage=combat.damage),
             )
 
     def spray_attack(self, pos, combat, psprite, player):
-        # if not frame_cd(5):
-        # return
+        if not frame_cd(15):
+            return
 
         sprite = sprites.BULLET
         x = pos.x + psprite.w//2 - sprite[0][3] // 2
@@ -75,7 +74,7 @@ class InputHandler(Processor):
             )
 
     def normal_attack(self, pos, combat, psprite, player):
-        if not frame_cd(5):
+        if not frame_cd(15):
             return
         sprite = sprites.BULLET
         x = pos.x + psprite.w//2 - sprite[0][3] // 2
@@ -105,7 +104,7 @@ class InputHandler(Processor):
             )
 
     def star_attack(self, pos, combat, psprite, player):
-        if not frame_cd(10):
+        if not frame_cd(15):
             return
         sprite = sprites.BULLET
         for side in Sides:
@@ -116,7 +115,7 @@ class InputHandler(Processor):
                 Pos(x=x, y=pos.y),
                 Sprite(sprite=sprite),
                 CircularMovement(speed=1, angle=side.value),
-                Movement(speed=4, angle=-90),
+                MoveToEnemy(speed=4, angle=-90),
                 Timer(20),
                 Combat(damage=combat.damage),
             )

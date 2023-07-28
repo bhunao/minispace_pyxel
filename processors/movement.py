@@ -84,17 +84,19 @@ class Move(Processor):
         if movement.f:
             angle_rad = radians(movement.angle)
             f_val = movement.f(movement.step)
-            print(f_val)
             pos.x += cos(angle_rad) * f_val * movement.speed
             pos.y += sin(angle_rad) * f_val * movement.speed
             movement.step += 1
+            if movement.step >= 1000:
+                movement.step = 0
 
     def move_to_target(self, pos, moviment, sprite, target):
         x, y = center_of(sprite, pos)
         dx = x - target.x
         dy = y - target.y
         angle = - degrees(atan2(dx, dy)) - 90
-        moviment.angle = angle
+        angle_diff = angle - moviment.angle
+        moviment.angle += angle_diff * .3
 
     def move_away_from(self, pos, moviment, target):
         dx = pos.x - target.x

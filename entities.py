@@ -1,5 +1,5 @@
 import pyxel
-from components import (Pos, Sprite, Combat, Enemy, Movement, Gun, HPBar,
+from components import (CircileNearTarget, MoveF, Pos, Sprite, Combat, Enemy, Movement, Gun, HPBar,
                         MoveToPlayer, MoveXtoPlayer, RotationGun,
                         FourRotationGun, CircularMovement)
 import sprites
@@ -164,7 +164,7 @@ def spinning_jack(create_entity, x=None, y=None):
 
 def spiral_daniel(create_entity, x=None, y=None, speed=.5):
     _x, _y = rndxy()
-    hp = 3
+    hp = 15
     return create_entity(
         Sprite(
             sprite=sprites.E3
@@ -193,6 +193,26 @@ def slow_shooter(create_entity, x=None, y=None):
         ),
         MoveToPlayer(speed=.5),
         Enemy(exp=2),
-        Gun(speed=2, aim_target=True, cd=25, timer=100),
+        Gun(speed=2, aim_target=True, cd=35, timer=100),
+        Combat(hp=hp, max_hp=hp, damage=1),
+    )
+
+
+def thing(create_entity, x=None, y=None):
+    _x, _y = rndxy()
+    hp = 3
+    return create_entity(
+        Sprite(
+            sprite=sprites.SPHERE2
+        ),
+        Pos(
+            x=x if x else _x,
+            y=y if y else pyxel.rndi(-64, - 16),
+        ),
+        MoveToPlayer(speed=1),
+        MoveF(speed=pyxel.rndf(.5, .6), angle=90,
+              f=lambda x: pyxel.sin(x) * 3),
+        Enemy(exp=2),
+        Gun(speed=2, aim_target=True, cd=35, timer=100),
         Combat(hp=hp, max_hp=hp, damage=1),
     )

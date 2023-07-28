@@ -3,21 +3,37 @@ import sprites
 import processors
 from esper import Processor
 from functions import rainbow
-from components import (Circle, MoveToPlayer, Pos, Sprite, Combat, Player,
-                        Enemy, Projectile, EnemyProjectile, Timer)
+from components import (Circle, GameOver, MoveToPlayer, Pos, Sprite, Combat,
+                        Player, Enemy, Projectile, EnemyProjectile, Text,
+                        Timer)
 
 
 class Game(Processor):
     def process(self):
-        pid, (pcombat, _) = self.world.get_components(
-            Combat, Player)[0]
+        player = self.world.get_components(Combat, Player)
+        pid, (pcombat, _) = player[0]
 
-        if pcombat.hp <= 0:
-            pyxel.text(60, 60, "GAME OVER!", rainbow())
+        over_list = self.get_components(GameOver)
+        game_over = len(over_list) <= 0
+        print(game_over, pcombat.hp, bool(game_over))
+        if pcombat.hp <= 0 and not game_over:
+            self.world.create_entity(
+                Text("GAMEOVER"),
+                Timer(15),
+                Pos(pyxel.width//2-20, pyxel.height//2-20),
+                GameOver()
+            )
+            print("hp é zero", pcombat)
             self.world.delete_entity(pid)
-
             self.world.remove_processor(processors.EnemySpawner)
             self.world.add_processor(processors.EnemySpawner())
+        elif pcombat.hp <= 0 and game_over:
+            print("game over na tela")
+        elif pcombat.hp >= 0 and not game_over:
+            print("outro")
+            pyxel.text(60, 60, "GAME OVER!", rainbow())
+            for id, _ in over_list:
+                self.world.delete_entity(id)
             for id, _ in self.world.get_components(Enemy):
                 self.world.delete_entity(id)
             for id, _ in self.world.get_components(Projectile):

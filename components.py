@@ -143,3 +143,7 @@ class HPBar:
 
 class Star:
     pass
+
+
+class GameOver:
+    pass

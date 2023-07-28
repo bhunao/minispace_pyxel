@@ -1,4 +1,6 @@
-from entities import slow_shooter, enemy2, enemy3, enemy4, rotationer_gunner, rotational_boss, slow_walker, spinning_jack, spiral_daniel
+from entities import (slow_shooter, enemy2, enemy3, enemy4, rotationer_gunner,
+                      rotational_boss, slow_walker, spinning_jack,
+                      spiral_daniel, thing)
 
 
 waves = [
@@ -66,7 +68,7 @@ waves = [
     # ================== wave ??
     [rotationer_gunner, (50,), 1, True],
     [rotationer_gunner, (160,), 1, False],
-    # ==================
+    # ================== wave ??
     [slow_shooter, (90,), 1, False],
     [slow_shooter, (), 3, False],
     [slow_shooter, (), 2, True],
@@ -84,15 +86,18 @@ waves = [
     [slow_shooter, (), 18, False],
     [enemy4, (), 1, False],
     [spiral_daniel, (), 50, False],
-    [spiral_daniel, (), 50, False],
-    [spiral_daniel, (), 50, False],
-    [spiral_daniel, (), 50, False],
-    [spiral_daniel, (), 50, False],
+    [spinning_jack, (), 50, False],
     [spiral_daniel, (), 50, False],
     [spinning_jack, (), 50, False],
+    [spiral_daniel, (), 50, False],
     [spinning_jack, (), 50, False],
+    [spiral_daniel, (), 50, False],
     [spinning_jack, (), 50, False],
+    [spiral_daniel, (), 50, False],
     [spinning_jack, (), 50, False],
+    [spiral_daniel, (), 50, False],
     [spinning_jack, (), 50, False],
-    [spinning_jack, (), 50, False],
+    # ================== wave ??
+    [rotational_boss, (-50,), 1, True],
+    [thing, (), 10, False],
 ]
