@@ -16,6 +16,7 @@ class InputHandler(Processor):
         self.attack_style: Items = Items.normal_attack
         self.n1 = 1
         self.n2 = 1
+        self.cd = 10
 
     def player_attack(self, pos, combat, psprite, player):
         match self.attack_style:
@@ -29,7 +30,7 @@ class InputHandler(Processor):
                 return self.star_attack(pos, combat, psprite, player)
 
     def zigzag_attack(self, pos, combat, psprite, player):
-        if not frame_cd(15):
+        if not frame_cd(self.cd):
             return
 
         sprite = sprites.LASER
@@ -37,7 +38,7 @@ class InputHandler(Processor):
 
         start = 0
         stop = 360
-        step = (abs(start) + abs(stop)) // player.level
+        step = (abs(start) + abs(stop)) // player.bullets
         for ang_dif in range(start, stop, step):
             self.world.create_entity(
                 Projectile(),
@@ -51,7 +52,7 @@ class InputHandler(Processor):
             )
 
     def spray_attack(self, pos, combat, psprite, player):
-        if not frame_cd(15):
+        if not frame_cd(self.cd):
             return
 
         sprite = sprites.BULLET
@@ -59,7 +60,7 @@ class InputHandler(Processor):
         angle = sin(pyxel.frame_count % 90) * 15
         angle -= 90
 
-        for n in range(player.level):
+        for n in range(player.bullets):
             mult = 1 if angle > -90 else -1
             diff = pyxel.rndi(-6, 6) * n * mult
 
@@ -74,7 +75,7 @@ class InputHandler(Processor):
             )
 
     def normal_attack(self, pos, combat, psprite, player):
-        if not frame_cd(15):
+        if not frame_cd(self.cd):
             return
         sprite = sprites.BULLET
         x = pos.x + psprite.w//2 - sprite[0][3] // 2
@@ -82,8 +83,8 @@ class InputHandler(Processor):
 
         start = -25
         stop = 25
-        step = (abs(start) + abs(stop)) // player.level
-        if player.level > 1:
+        step = (abs(start) + abs(stop)) // player.bullets
+        if player.bullets > 1:
             for ang_dif in range(start, stop + step, step):
                 self.world.create_entity(
                     Projectile(),
@@ -104,7 +105,7 @@ class InputHandler(Processor):
             )
 
     def star_attack(self, pos, combat, psprite, player):
-        if not frame_cd(15):
+        if not frame_cd(self.cd):
             return
         sprite = sprites.BULLET
         for side in Sides:

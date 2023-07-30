@@ -10,6 +10,7 @@ class Player:
     exp: int = 0
     exp_total: int = 25
     level: int = 1
+    bullets: int = 1
 
 
 @dataclass

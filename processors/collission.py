@@ -65,6 +65,7 @@ class Collission(Processor):
                     playercombat.hp += 1
                 else:
                     input_handler.attack_style = item.item
+                    player.bullets += 1
                     self.world.remove_processor(InputHandler)
                     self.world.add_processor(input_handler)
 
