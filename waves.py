@@ -1,9 +1,10 @@
-from entities import (slow_shooter, enemy2, enemy3, enemy4, rotationer_gunner,
+from entities import (rodoaldo, slow_shooter, enemy2, enemy3, enemy4, rotationer_gunner,
                       rotational_boss, slow_walker, spinning_jack,
                       spiral_daniel, thing)
 
 
 waves = [
+    [rodoaldo, (110, 5), 1, True],
     # ================== wave 01
     [slow_walker, (61, -16), 1, True],
     [slow_walker, (106, -8), 1, True],

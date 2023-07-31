@@ -1,5 +1,5 @@
 import pyxel
-from components import (CircileNearTarget, MoveF, Pos, Sprite, Combat, Enemy, Movement, Gun, HPBar,
+from components import (CircileNearTarget, MoveF, MoveX, Pos, Sprite, Combat, Enemy, Movement, Gun, HPBar,
                         MoveToPlayer, MoveXtoPlayer, RotationGun,
                         FourRotationGun, CircularMovement)
 import sprites
@@ -100,9 +100,9 @@ def rotational_boss(create_entity, x=None, y=None):
             y=y if y else pyxel.rndi(-64, - 16),
         ),
         MoveXtoPlayer(speed=5),
-        Enemy(exp=10),
+        Enemy(exp=15),
         Combat(hp=hp,
-               max_hp=hp, damage=4),
+               max_hp=hp, damage=1),
         FourRotationGun(speed=2, cd=4, inc=5, timer=350),
         HPBar(),
     )
@@ -138,6 +138,7 @@ def slow_walker(create_entity, x=None, y=None):
             y=y if y else pyxel.rndi(-64, - 16),
         ),
         Movement(speed=.5, angle=90),
+        MoveX(speed=1, angle=90),
         Enemy(),
         Combat(hp=hp, max_hp=hp, damage=1),
     )
@@ -212,6 +213,25 @@ def thing(create_entity, x=None, y=None):
         MoveToPlayer(speed=1),
         MoveF(speed=pyxel.rndf(.5, .6), angle=90,
               f=lambda x: pyxel.sin(x) * 3),
+        Enemy(exp=2),
+        Gun(speed=2, aim_target=True, cd=35, timer=100),
+        Combat(hp=hp, max_hp=hp, damage=1),
+    )
+
+
+def rodoaldo(create_entity, x=None, y=None):
+    _x, _y = rndxy()
+    hp = 3
+    return create_entity(
+        Sprite(
+            sprite=sprites.SPHERE2
+        ),
+        Pos(
+            x=x if x else _x,
+            y=y if y else pyxel.rndi(-64, - 16),
+        ),
+        CircularMovement(speed=2, f=lambda x: 0 if x < 50 else 1, radius=5),
+        Movement(speed=1, f=lambda x: 1 if x < 50 else 0, angle=90),
         Enemy(exp=2),
         Gun(speed=2, aim_target=True, cd=35, timer=100),
         Combat(hp=hp, max_hp=hp, damage=1),

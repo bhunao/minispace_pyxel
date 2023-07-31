@@ -2,7 +2,7 @@ import pyxel
 from items import Items
 import sprites
 from esper import Processor
-from components import (MoveF, MoveToEnemy, Projectile, Pos, Sprite, CircularMovement, Timer,
+from components import (MoveF, MoveToEnemy, MoveX, Projectile, Pos, Sprite, CircularMovement, Timer,
                         Combat, Movement, Player, Text, MoveXtoPlayer)
 from functions import frame_cd
 from sprites import Sides
@@ -33,26 +33,35 @@ class InputHandler(Processor):
         if not frame_cd(self.cd):
             return
 
-        sprite = sprites.LASER
-        x = pos.x + psprite.w//2 - sprite[0][3] // 2
+        bullet_mult = player.bullets + player.level
+        sprite = sprites.BULLET
+        angle = -90
+        start = -2*bullet_mult
+        stop = 2*bullet_mult
+        step = (abs(start) + abs(stop)) // bullet_mult
 
-        start = 0
-        stop = 360
-        step = (abs(start) + abs(stop)) // player.bullets
-        for ang_dif in range(start, stop, step):
+        if bullet_mult > 1:
+            angles = range(start, stop + step, step)
+        else:
+            angles = [0]
+
+        for ang_dif in angles:
+            x = pos.x + psprite.w//2 - sprite[0][3] // 2 + ang_dif
             self.world.create_entity(
                 Projectile(),
                 Pos(x=x, y=pos.y),
                 Sprite(sprite=sprites.BULLET),
-                MoveToEnemy(speed=4, angle=-90),
-                MoveF(speed=.05, angle=ang_dif,
-                      f=lambda x: sin(x) + x * .1),
-                Timer(135),
+                Movement(speed=3, angle=angle+ang_dif),
+                MoveX(speed=4, f=lambda x: sin(x)),
+                Timer(35),
                 Combat(damage=combat.damage),
             )
 
     def spray_attack(self, pos, combat, psprite, player):
-        if not frame_cd(self.cd):
+        bullet_mult = player.bullets + player.level
+        if bullet_mult > 10:
+            pass
+        if not frame_cd(10//bullet_mult):
             return
 
         sprite = sprites.BULLET
@@ -60,46 +69,38 @@ class InputHandler(Processor):
         angle = sin(pyxel.frame_count % 90) * 15
         angle -= 90
 
-        for n in range(player.bullets):
-            mult = 1 if angle > -90 else -1
-            diff = pyxel.rndi(-6, 6) * n * mult
-
-            self.world.create_entity(
-                Projectile(),
-                Pos(x=x, y=pos.y),
-                Sprite(sprite=sprites.LASER),
-                MoveF(speed=3, angle=angle,
-                      f=lambda x: abs(pyxel.sin(x)) + 2),
-                Timer(45),
-                Combat(damage=combat.damage),
-            )
+        self.world.create_entity(
+            Projectile(),
+            Pos(x=x, y=pos.y),
+            Sprite(sprite=sprites.LASER),
+            MoveF(speed=3, angle=angle,
+                  f=lambda x: abs(pyxel.sin(x)) + 2),
+            Timer(45),
+            Combat(damage=combat.damage),
+        )
 
     def normal_attack(self, pos, combat, psprite, player):
         if not frame_cd(self.cd):
             return
+        bullet_mult = player.bullets + player.level
         sprite = sprites.BULLET
         x = pos.x + psprite.w//2 - sprite[0][3] // 2
         angle = -90
 
         start = -25
         stop = 25
-        step = (abs(start) + abs(stop)) // player.bullets
-        if player.bullets > 1:
-            for ang_dif in range(start, stop + step, step):
-                self.world.create_entity(
-                    Projectile(),
-                    Pos(x=x, y=pos.y),
-                    Sprite(sprite=sprites.BULLET),
-                    Movement(speed=4, angle=angle+ang_dif),
-                    Timer(35),
-                    Combat(damage=combat.damage),
-                )
+        step = (abs(start) + abs(stop)) // bullet_mult
+        if bullet_mult > 1:
+            angles = range(start, stop + step, step)
         else:
+            angles = [0]
+
+        for ang_dif in angles:
             self.world.create_entity(
                 Projectile(),
                 Pos(x=x, y=pos.y),
                 Sprite(sprite=sprites.BULLET),
-                Movement(speed=4, angle=angle),
+                Movement(speed=4, angle=angle+ang_dif),
                 Timer(35),
                 Combat(damage=combat.damage),
             )
@@ -107,15 +108,16 @@ class InputHandler(Processor):
     def star_attack(self, pos, combat, psprite, player):
         if not frame_cd(self.cd):
             return
+
+        bullet_mult = (player.bullets + player.level) * 3
         sprite = sprites.BULLET
-        for side in Sides:
-            sprite = sprites.LASER
+        for angle in range(0, 360, 360//bullet_mult):
             x = pos.x + psprite.w//2 - sprite[0][3] // 2
             self.world.create_entity(
                 Projectile(),
                 Pos(x=x, y=pos.y),
-                Sprite(sprite=sprite),
-                CircularMovement(speed=1, angle=side.value),
+                Sprite(sprite=sprites.BULLET),
+                CircularMovement(speed=1, angle=angle),
                 MoveToEnemy(speed=4, angle=-90),
                 Timer(20),
                 Combat(damage=combat.damage),
@@ -123,6 +125,11 @@ class InputHandler(Processor):
 
     def process(self):
         for ent, (pos, combat, psprite, player) in self.world.get_components(Pos, Combat, Sprite, Player):
+            pos.x = min(pos.x, pyxel.width-4)
+            pos.x = max(pos.x, 0)
+
+            pos.y = min(pos.y, pyxel.height-4)
+            pos.y = max(pos.y, 0)
             if pyxel.btn(pyxel.KEY_Q):
                 self.n2 += 1
             if pyxel.btn(pyxel.KEY_E):
@@ -149,6 +156,8 @@ class InputHandler(Processor):
                 self.attack_style = Items.star_attack
             if pyxel.btnp(pyxel.KEY_5):
                 self.attack_style = Items.zizag_attack
+            if pyxel.btnp(pyxel.KEY_6):
+                player.bullets += 1
             if pyxel.btnp(pyxel.KEY_1):
                 entities.spinning_jack(self.world.create_entity)
                 self.world.create_entity(

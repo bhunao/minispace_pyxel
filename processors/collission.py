@@ -54,8 +54,13 @@ class Collission(Processor):
             )
 
     def process(self):
-        pid, (playerpos, playersprite, playercombat, player) = self.world.get_components(
-            Pos, Sprite, Combat, Player)[0]
+        player = self.world.get_components(
+            Pos, Sprite, Combat, Player)
+
+        if not player:
+            return
+
+        pid, (playerpos, playersprite, playercombat, player) = player[0]
 
         for iid, components in self.get_components(Item, Pos, Sprite):
             item, ipos, isprite = components

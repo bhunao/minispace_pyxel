@@ -2,7 +2,12 @@ from collections.abc import Callable
 from dataclasses import dataclass
 from typing import Any, Dict, Optional, Sequence
 
+from math import cos
 from items import Items
+
+
+def pecado(x):
+    return cos(x * .1)
 
 
 @dataclass
@@ -10,7 +15,7 @@ class Player:
     exp: int = 0
     exp_total: int = 25
     level: int = 1
-    bullets: int = 1
+    bullets: int = 0
 
 
 @dataclass
@@ -67,22 +72,23 @@ class EnemyProjectile:
 
 
 @dataclass
-class CircularMovement:
+class Movement:
+    speed: float = 0
+    angle: float = 0
+    f: Optional[Callable] = None
+    step: int = 0
+
+
+@dataclass
+class CircularMovement(Movement):
     speed: float = 0
     angle: float = 0
     radius: float = 3
 
 
 @dataclass
-class Movement:
-    speed: float = 0
-    angle: float = 0
-
-
-@dataclass
 class MoveF(Movement):
     f: Optional[Callable] = None
-    step: int = 0
 
 
 @dataclass
@@ -96,6 +102,11 @@ class MoveToPlayer(Movement):
 
 class MoveXtoPlayer(Movement):
     pass
+
+
+@dataclass
+class MoveX(Movement):
+    f: Optional[Callable] = pecado
 
 
 @dataclass
@@ -143,8 +154,4 @@ class HPBar:
 
 
 class Star:
-    pass
-
-
-class GameOver:
     pass

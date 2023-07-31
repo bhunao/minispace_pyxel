@@ -8,6 +8,8 @@ def rainbow():
 
 
 def frame_cd(n) -> bool:
+    if n <= 0:
+        return True
     return not pyxel.frame_count % n
 
 
