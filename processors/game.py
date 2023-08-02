@@ -20,11 +20,11 @@ class Game(Processor):
                     Text("press SPACE to restart..."),
                     Pos(pyxel.width//2-50, pyxel.height//2),
                 )
-                self.world.remove_processor(processors.EnemySpawner)
-                self.world.add_processor(processors.EnemySpawner())
                 self.world.delete_entity(pid)
         elif not player:
             if pyxel.btnp(pyxel.KEY_SPACE):
+                self.world.remove_processor(processors.EnemySpawner)
+                self.world.add_processor(processors.EnemySpawner())
                 self.delete_entities()
                 self.reset()
 

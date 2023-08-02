@@ -61,6 +61,7 @@ class Combat:
 class Enemy:
     exp: int = 1
     atk_cd: int = 0
+    drop: Optional[Items] = None
 
 
 class Projectile:
@@ -74,7 +75,7 @@ class EnemyProjectile:
 @dataclass
 class Movement:
     speed: float = 0
-    angle: float = 0
+    angle: float = 90
     f: Optional[Callable] = None
     step: int = 0
 
@@ -84,6 +85,7 @@ class CircularMovement(Movement):
     speed: float = 0
     angle: float = 0
     radius: float = 3
+    circ_step: int = 0
 
 
 @dataclass
@@ -143,6 +145,11 @@ class FourGun(Gun):
 @dataclass
 class RotationGun(Gun):
     inc: int = 45
+
+
+@dataclass
+class BarrierGun(RotationGun):
+    pass
 
 
 class FourRotationGun(RotationGun):

@@ -1,7 +1,9 @@
+from random import choice
 import pyxel
-from components import (CircileNearTarget, MoveF, MoveX, Pos, Sprite, Combat, Enemy, Movement, Gun, HPBar,
+from components import (BarrierGun, CircileNearTarget, MoveF, MoveX, Pos, Sprite, Combat, Enemy, Movement, Gun, HPBar,
                         MoveToPlayer, MoveXtoPlayer, RotationGun,
                         FourRotationGun, CircularMovement)
+from items import Items
 import sprites
 from functions import rndxy
 
@@ -9,6 +11,10 @@ from functions import rndxy
 def enemy1(create_entity, x=None, y=None):
     _x, _y = rndxy()
     hp = 3
+    drop = choice([
+        Items.change_attack,
+        Items.plus_bullet,
+    ])
     return create_entity(
         Sprite(
             sprite=sprites.SPHERE
@@ -18,7 +24,7 @@ def enemy1(create_entity, x=None, y=None):
             y=y if y else pyxel.rndi(-64, - 16),
         ),
         MoveToPlayer(speed=.5),
-        Enemy(),
+        Enemy(drop=drop),
         Combat(hp=hp, max_hp=hp, damage=1),
     )
 
@@ -90,7 +96,11 @@ def rotational_boss(create_entity, x=None, y=None):
     _x, _y = rndxy()
     x = x if x else _x
     y = y if y else -16
-    hp = 150
+    hp = 50
+    drop = choice([
+        Items.change_attack,
+        Items.plus_bullet,
+    ])
     return create_entity(
         Sprite(
             sprite=sprites.E4
@@ -100,10 +110,10 @@ def rotational_boss(create_entity, x=None, y=None):
             y=y if y else pyxel.rndi(-64, - 16),
         ),
         MoveXtoPlayer(speed=5),
-        Enemy(exp=15),
+        Enemy(exp=15, drop=drop),
         Combat(hp=hp,
                max_hp=hp, damage=1),
-        FourRotationGun(speed=2, cd=4, inc=5, timer=350),
+        FourRotationGun(speed=2, cd=6, inc=5, timer=350),
         HPBar(),
     )
 
@@ -157,7 +167,7 @@ def spinning_jack(create_entity, x=None, y=None):
         ),
         CircularMovement(speed=.5, radius=7),
         Movement(speed=.5, angle=90),
-        Gun(speed=2, aim_target=True, cd=15, timer=100),
+        Gun(speed=2, aim_target=True, cd=25, timer=100),
         Enemy(exp=5),
         Combat(hp=hp, max_hp=hp, damage=1),
     )
@@ -194,45 +204,90 @@ def slow_shooter(create_entity, x=None, y=None):
         ),
         MoveToPlayer(speed=.5),
         Enemy(exp=2),
-        Gun(speed=2, aim_target=True, cd=35, timer=100),
+        Gun(speed=2, aim_target=True, cd=40, timer=100),
         Combat(hp=hp, max_hp=hp, damage=1),
     )
 
 
-def thing(create_entity, x=None, y=None):
-    _x, _y = rndxy()
-    hp = 3
+def ronnie_wall(create_entity, x=None, y=None):
+    _x, _ = rndxy()
+    hp = 10
+
+    def coisa(x):
+        b = x % 100 > 50
+        impopar = (x // 100) % 2 == 0
+        return 0 if b else 1 if impopar else -.2
+
     return create_entity(
         Sprite(
-            sprite=sprites.SPHERE2
+            sprite=sprites.WALLBOY
         ),
         Pos(
             x=x if x else _x,
             y=y if y else pyxel.rndi(-64, - 16),
         ),
-        MoveToPlayer(speed=1),
-        MoveF(speed=pyxel.rndf(.5, .6), angle=90,
-              f=lambda x: pyxel.sin(x) * 3),
+        Movement(speed=.5, f=coisa),
         Enemy(exp=2),
-        Gun(speed=2, aim_target=True, cd=35, timer=100),
+        Gun(1, 90, 50, True, timer=150),
         Combat(hp=hp, max_hp=hp, damage=1),
     )
 
 
 def rodoaldo(create_entity, x=None, y=None):
     _x, _y = rndxy()
-    hp = 3
+    hp = 5
     return create_entity(
         Sprite(
-            sprite=sprites.SPHERE2
+            sprite=sprites.X_ENEMY
         ),
         Pos(
             x=x if x else _x,
             y=y if y else pyxel.rndi(-64, - 16),
         ),
-        CircularMovement(speed=2, f=lambda x: 0 if x < 50 else 1, radius=5),
-        Movement(speed=1, f=lambda x: 1 if x < 50 else 0, angle=90),
+        CircularMovement(speed=1, f=lambda x: 0 if x < 100 else 1, radius=5),
+        Movement(speed=1, f=lambda x: 1 if x < 100 else 0, angle=90),
         Enemy(exp=2),
-        Gun(speed=2, aim_target=True, cd=35, timer=100),
+        Gun(speed=2, aim_target=True, cd=30, timer=100),
         Combat(hp=hp, max_hp=hp, damage=1),
     )
+
+
+def bartolomeo(create_entity, x=None, y=None):
+    _x, _y = rndxy()
+    hp = 30
+    drop = choice([
+        Items.change_attack,
+        Items.plus_bullet,
+    ])
+    return create_entity(
+        Sprite(
+            sprite=sprites.BARTOLOMEO
+        ),
+        Pos(
+            x=x if x else _x,
+            y=y if y else pyxel.rndi(-64, - 16),
+        ),
+        Movement(speed=.5),
+        BarrierGun(speed=.5,
+                   cd=15,
+                   inc=3,
+                   timer=120),
+        Enemy(exp=5),
+        Combat(hp=hp, max_hp=hp, damage=1),
+    )
+
+
+entities_list = [
+    enemy1,
+    enemy2,
+    enemy3,
+    enemy4,
+    rotational_boss,
+    rotationer_gunner,
+    slow_walker,
+    spinning_jack,
+    spiral_daniel,
+    slow_shooter,
+    ronnie_wall,
+    rodoaldo,
+]

@@ -2,7 +2,7 @@ import pyxel
 from processors.input import InputHandler
 import sprites
 from esper import Processor
-from items import Items
+from items import AttackStyle, Items
 from components import (Pos, Sprite, Combat, Player, Enemy,
                         Text, Movement, Timer, Projectile, Circle,
                         EnemyProjectile, Item)
@@ -19,9 +19,23 @@ class Collission(Processor):
             Timer(25),
         )
 
-    def create_item(self, pos, item=None):
-        item = choice([*Items])
-        sprite = sprites.HEART if item == Items.heart else sprites.PLUS_ONE
+    def create_item(self, pos: Pos, item=None):
+        sprite = sprites.PLUS_ONE
+        if not item and pyxel.rndi(0, 100) >= 90:
+            item = Items.heart
+            sprite = sprites.HEART
+
+        if not item:
+            return
+
+        match item:
+            case Items.heart:
+                sprite = sprites.HEART
+            case Items.plus_bullet:
+                sprite = sprites.PLUS_ONE
+            case Items.change_attack:
+                sprite = sprites.ATTACKCHANGE
+
         self.world.create_entity(
             Item(item),
             Pos(pos.x, pos.y),
@@ -65,14 +79,21 @@ class Collission(Processor):
         for iid, components in self.get_components(Item, Pos, Sprite):
             item, ipos, isprite = components
             if self.collide_with(ipos, isprite, playerpos, playersprite):
-                input_handler = InputHandler()
-                if item.item == Items.heart:
-                    playercombat.hp += 1
-                else:
-                    input_handler.attack_style = item.item
-                    player.bullets += 1
-                    self.world.remove_processor(InputHandler)
-                    self.world.add_processor(input_handler)
+                input_handler = self.world.get_processor(InputHandler)
+                match item.item:
+                    case Items.heart:
+                        print("heart")
+                        playercombat.hp += 1
+                    case Items.change_attack:
+                        print("new_attack")
+                        if input_handler.attack_style == item.item:
+                            player.bullets += 1
+                        else:
+                            new_attack = choice([*AttackStyle])
+                            input_handler.attack_style = new_attack
+                    case Items.plus_bullet:
+                        print("bullets")
+                        player.bullets += 1
 
                 self.world.delete_entity(iid)
 
@@ -98,7 +119,9 @@ class Collission(Processor):
                     if self.attack(pcombat, ecombat, eid):
                         player.exp += enemy.exp
                         self.level_up(player, playerpos, playercombat)
-                        if pyxel.rndi(0, 15) == 0:
+                        if enemy.drop:
+                            self.create_item(epos, enemy.drop)
+                        else:
                             self.create_item(epos)
 
         enemy_components = Pos, Sprite, Combat, Enemy

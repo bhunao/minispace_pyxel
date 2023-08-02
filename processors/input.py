@@ -1,32 +1,28 @@
 import pyxel
-from items import Items
+from items import AttackStyle
 import sprites
 from esper import Processor
-from components import (MoveF, MoveToEnemy, MoveX, Projectile, Pos, Sprite, CircularMovement, Timer,
-                        Combat, Movement, Player, Text, MoveXtoPlayer)
+from components import (MoveF, MoveToEnemy, Projectile, Pos, Sprite, CircularMovement, Timer,
+                        Combat, Movement, Player, Text)
 from functions import frame_cd
-from sprites import Sides
 from math import sin
 import entities
 
 
 class InputHandler(Processor):
-    def __init__(self) -> None:
-        super().__init__()
-        self.attack_style: Items = Items.normal_attack
-        self.n1 = 1
-        self.n2 = 1
-        self.cd = 10
+    attack_style: AttackStyle = AttackStyle.normal_attack
+    cd: int = 10
+    select: bool = False
 
     def player_attack(self, pos, combat, psprite, player):
         match self.attack_style:
-            case Items.normal_attack:
+            case AttackStyle.normal_attack:
                 return self.normal_attack(pos, combat, psprite, player)
-            case Items.spray_attack:
+            case AttackStyle.spray_attack:
                 return self.spray_attack(pos, combat, psprite, player)
-            case Items.zizag_attack:
+            case AttackStyle.zizag_attack:
                 return self.zigzag_attack(pos, combat, psprite, player)
-            case Items.star_attack:
+            case AttackStyle.star_attack:
                 return self.star_attack(pos, combat, psprite, player)
 
     def zigzag_attack(self, pos, combat, psprite, player):
@@ -46,13 +42,13 @@ class InputHandler(Processor):
             angles = [0]
 
         for ang_dif in angles:
-            x = pos.x + psprite.w//2 - sprite[0][3] // 2 + ang_dif
+            x = pos.x + psprite.w//2 - sprite[0][3] // 2
             self.world.create_entity(
                 Projectile(),
                 Pos(x=x, y=pos.y),
                 Sprite(sprite=sprites.BULLET),
-                Movement(speed=3, angle=angle+ang_dif),
-                MoveX(speed=4, f=lambda x: sin(x)),
+                CircularMovement(speed=3, angle=angle+ang_dif),
+
                 Timer(35),
                 Combat(damage=combat.damage),
             )
@@ -109,7 +105,7 @@ class InputHandler(Processor):
         if not frame_cd(self.cd):
             return
 
-        bullet_mult = (player.bullets + player.level) * 3
+        bullet_mult = (player.bullets + player.level) * 2
         sprite = sprites.BULLET
         for angle in range(0, 360, 360//bullet_mult):
             x = pos.x + psprite.w//2 - sprite[0][3] // 2
@@ -127,17 +123,9 @@ class InputHandler(Processor):
         for ent, (pos, combat, psprite, player) in self.world.get_components(Pos, Combat, Sprite, Player):
             pos.x = min(pos.x, pyxel.width-4)
             pos.x = max(pos.x, 0)
-
             pos.y = min(pos.y, pyxel.height-4)
             pos.y = max(pos.y, 0)
-            if pyxel.btn(pyxel.KEY_Q):
-                self.n2 += 1
-            if pyxel.btn(pyxel.KEY_E):
-                self.n2 -= 1
-            if pyxel.btn(pyxel.KEY_UP):
-                self.n1 += 1
-            if pyxel.btn(pyxel.KEY_DOWN):
-                self.n1 -= 1
+
             if pyxel.btn(pyxel.KEY_A):
                 pos.x -= 2
             if pyxel.btn(pyxel.KEY_D):
@@ -148,20 +136,31 @@ class InputHandler(Processor):
                 pos.y += 2
             if pyxel.btn(pyxel.KEY_SPACE):
                 self.player_attack(pos, combat, psprite, player)
-            if pyxel.btnp(pyxel.KEY_2):
-                self.attack_style = Items.normal_attack
-            if pyxel.btnp(pyxel.KEY_3):
-                self.attack_style = Items.spray_attack
-            if pyxel.btnp(pyxel.KEY_4):
-                self.attack_style = Items.star_attack
-            if pyxel.btnp(pyxel.KEY_5):
-                self.attack_style = Items.zizag_attack
             if pyxel.btnp(pyxel.KEY_6):
                 player.bullets += 1
-            if pyxel.btnp(pyxel.KEY_1):
-                entities.spinning_jack(self.world.create_entity)
-                self.world.create_entity(
-                    Text("spinning_jack"),
-                    Pos(10, 50),
-                    Timer(20)
-                )
+
+            if self.select:
+                n = -1
+                for i in range(49, 59):
+                    if pyxel.btnp(i):
+                        n = i-49
+                        break
+
+                if n >= 0:
+                    ent = entities.entities_list[n]
+                    ent(self.world.create_entity)
+                    self.world.create_entity(
+                        Text(str(ent.__name__)),
+                        Pos(10, 0),
+                        Timer(20)
+                    )
+                    self.select = False
+            elif pyxel.btnp(pyxel.KEY_1) and not self.select:
+                self.select = True
+                for i, enemy in enumerate(entities.entities_list[0:10]):
+                    text = f"{i} - {enemy.__name__}"
+                    self.world.create_entity(
+                        Text(text),
+                        Pos(10, 10 + i * 10),
+                        Timer(100)
+                    )

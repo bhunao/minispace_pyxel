@@ -87,6 +87,23 @@ E6 = [
     (0, 0, 96, 16, 16, Colors.BLACK),
     (0, 16, 96, 16, 16, Colors.BLACK),
 ]
+X_ENEMY = [
+    (0, 0, 144, 8, 8, Colors.BLACK),
+    (0, 8, 144, 8, 8, Colors.BLACK),
+    (0, 0, 152, 8, 8, Colors.BLACK),
+    (0, 8, 152, 8, 8, Colors.BLACK),
+]
+WALLBOY = [
+    (0, 16, 144, 8, 8, Colors.BLACK),
+    (0, 24, 144, 8, 8, Colors.BLACK),
+    (0, 16, 152, 8, 8, Colors.BLACK),
+    (0, 24, 152, 8, 8, Colors.BLACK),
+]
+BARTOLOMEO = [
+    (0, 0, 160, 16, 16, Colors.BLACK),
+    (0, 16, 160, 16, 16, Colors.BLACK),
+]
+
 
 STARS = [
     (0, 0, 80, 4, 4, Colors.BLACK),
@@ -102,6 +119,10 @@ PLUS_ONE = [
 HEART = [
     (0, 40, 48, 8, 8, Colors.BLACK),
     (0, 40, 56, 8, 8, Colors.BLACK),
+]
+ATTACKCHANGE = [
+    (0, 32, 64, 8, 8, Colors.BLACK),
+    (0, 32, 72, 8, 8, Colors.BLACK),
 ]
 PLANET = [
     (0, 48, 0, 32, 32, Colors.BLACK),

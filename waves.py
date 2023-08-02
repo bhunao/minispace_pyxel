@@ -1,10 +1,28 @@
-from entities import (rodoaldo, slow_shooter, enemy2, enemy3, enemy4, rotationer_gunner,
-                      rotational_boss, slow_walker, spinning_jack,
-                      spiral_daniel, thing)
-
+from entities import (bartolomeo, rodoaldo, slow_shooter, enemy2, enemy3, enemy4,
+                      rotationer_gunner, rotational_boss, slow_walker, spinning_jack, spiral_daniel, ronnie_wall)
 
 waves = [
-    [rodoaldo, (110, 5), 1, True],
+    * [
+        [spiral_daniel, (x-8, -8), 1, True]
+        for x in range(-50, 272, 48)
+    ],
+    *[
+        [spiral_daniel, (x+16, -40), 1, True]
+        for x in range(-50, 272, 48)
+    ],
+    *[
+        [spiral_daniel, (x, -72), 1, True]
+        for x in range(-50, 272, 48)
+    ],
+    *[
+        [spiral_daniel, (x+16, -104), 1, True]
+        for x in range(-50, 272, 48)
+    ],
+    *[
+        [spiral_daniel, (x, -136), 1, True]
+        for x in range(-50, 272, 48)
+    ],
+    [spiral_daniel, (110-8, -168), 1, False],
     # ================== wave 01
     [slow_walker, (61, -16), 1, True],
     [slow_walker, (106, -8), 1, True],
@@ -34,7 +52,8 @@ waves = [
     [slow_walker, (106, -8), 1, True],
     [spinning_jack, (151, -16), 1, False],
     # ================== wave 02
-    [slow_shooter, (151, -16), 1, False],
+    [slow_shooter, (151, -16), 1, True],
+    [rodoaldo, (), 2, False],
     # ================== wave 03
     [spinning_jack, (60, -16), 1, True],
     [spinning_jack, (160, -16), 1, False],
@@ -69,36 +88,23 @@ waves = [
     # ================== wave ??
     [rotationer_gunner, (50,), 1, True],
     [rotationer_gunner, (160,), 1, False],
+    # ================== wave ?? WALL
+    *[
+        [ronnie_wall, (x, -10), 1, True]
+        for x in range(-2, 222, 7)
+    ],
+    [ronnie_wall, (110, -10), 1, False],
     # ================== wave ??
-    [slow_shooter, (90,), 1, False],
-    [slow_shooter, (), 3, False],
     [slow_shooter, (), 2, True],
     [enemy2, (), 1, True],
-    [slow_shooter, (), 10, False],
     [enemy3, (), 2, False],
-    [slow_shooter, (), 10, False],
-    [slow_shooter, (), 5, False],
-    [slow_shooter, (), 10, False],
-    [slow_shooter, (), 15, False],
-    [enemy3, (), 5, False],
-    [slow_shooter, (), 13, False],
-    [slow_shooter, (), 8, False],
-    [slow_shooter, (), 13, False],
-    [slow_shooter, (), 18, False],
     [enemy4, (), 1, False],
     [spiral_daniel, (), 50, False],
-    [spinning_jack, (), 50, False],
-    [spiral_daniel, (), 50, False],
-    [spinning_jack, (), 50, False],
-    [spiral_daniel, (), 50, False],
-    [spinning_jack, (), 50, False],
-    [spiral_daniel, (), 50, False],
-    [spinning_jack, (), 50, False],
-    [spiral_daniel, (), 50, False],
-    [spinning_jack, (), 50, False],
-    [spiral_daniel, (), 50, False],
-    [spinning_jack, (), 50, False],
+    # ================== wave ??
+    [bartolomeo, (36, -48), 1, True],
+    [bartolomeo, (102, -56), 1, True],
+    [bartolomeo, (168, -48), 1, False],
+    # ================== wave ?? SECOND WALL
     # ================== wave ??
     [rotational_boss, (-50,), 1, True],
-    [thing, (), 10, False],
 ]

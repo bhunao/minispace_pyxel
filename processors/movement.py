@@ -83,15 +83,17 @@ class Move(Processor):
         if movement.f:
             speed = movement.speed * movement.f(movement.step)
             angle_rad = radians(
-                movement.angle + pyxel.frame_count * movement.radius)
+                movement.angle + movement.circ_step * movement.radius)
             pos.x += cos(angle_rad) * speed
             pos.y += sin(angle_rad) * speed
             movement.step += 1
+            movement.circ_step += 1
         else:
             angle_rad = radians(
-                movement.angle + pyxel.frame_count * movement.radius)
+                movement.angle + movement.circ_step * movement.radius)
             pos.x += cos(angle_rad) * movement.speed
             pos.y += sin(angle_rad) * movement.speed
+            movement.circ_step += 1
 
     @staticmethod
     def move(pos, movement):
@@ -122,8 +124,7 @@ class Move(Processor):
         dx = x - target.x
         dy = y - target.y
         angle = - degrees(atan2(dx, dy)) - 90
-        angle_diff = angle - movement.angle
-        movement.angle += angle_diff * .3
+        movement.angle = angle
 
     def move_away_from(self, pos, movement, target):
         dx = pos.x - target.x

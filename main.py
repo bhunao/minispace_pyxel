@@ -1,5 +1,5 @@
 import sprites
-from components import (Circle, Player, Sprite, Pos, Combat, Star, Movement)
+from components import (Player, Sprite, Pos, Combat, Star, Movement)
 from functions import rndxy
 import processors
 
@@ -24,7 +24,6 @@ class App:
         self.world.add_processor(processors.Render())
         self.world.add_processor(processors.Shoot())
         self.world.add_processor(processors.Game())
-        self.world.create_entity()
 
         self.world.create_entity(
             Sprite(
