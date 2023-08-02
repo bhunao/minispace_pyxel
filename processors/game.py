@@ -13,7 +13,7 @@ class Game(Processor):
             pid, (pcombat, _) = player[0]
             if pcombat.hp <= 0:
                 self.world.create_entity(
-                    Text("GAMEOVER"),
+                    Text("GAME OVER!"),
                     Pos(pyxel.width//2-20, pyxel.height//2-20),
                 )
                 self.world.create_entity(
