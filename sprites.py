@@ -103,6 +103,16 @@ BARTOLOMEO = [
     (0, 0, 160, 16, 16, Colors.BLACK),
     (0, 16, 160, 16, 16, Colors.BLACK),
 ]
+RONALDO = [
+    (0, 0, 176, 8, 8, Colors.BLACK),
+    (0, 8, 176, 8, 8, Colors.BLACK),
+]
+CABESAKURA = [
+    (0, 0, 192, 8, 8, Colors.BLACK),
+    (0, 8, 192, 8, 8, Colors.BLACK),
+    (0, 0, 200, 8, 8, Colors.BLACK),
+    (0, 8, 200, 8, 8, Colors.BLACK),
+]
 
 
 STARS = [

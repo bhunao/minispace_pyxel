@@ -10,6 +10,9 @@ from math import pi
 from random import choice
 
 
+INVULNERABILITY_TIME = 15
+
+
 class Collission(Processor):
     def display_dmg(self, pos, combat):
         self.world.create_entity(
@@ -82,17 +85,14 @@ class Collission(Processor):
                 input_handler = self.world.get_processor(InputHandler)
                 match item.item:
                     case Items.heart:
-                        print("heart")
                         playercombat.hp += 1
                     case Items.change_attack:
-                        print("new_attack")
                         if input_handler.attack_style == item.item:
                             player.bullets += 1
                         else:
                             new_attack = choice([*AttackStyle])
                             input_handler.attack_style = new_attack
                     case Items.plus_bullet:
-                        print("bullets")
                         player.bullets += 1
 
                 self.world.delete_entity(iid)
@@ -105,9 +105,14 @@ class Collission(Processor):
         eprojcetile_components = Pos, Sprite, Combat, EnemyProjectile
         for epid, (eppos, epsprite, epcombat, _) in self.world.get_components(*eprojcetile_components):
             if self.collide_with(eppos, epsprite, playerpos, playersprite):
-                self.display_dmg(playerpos, epcombat)
-                self.world.delete_entity(epid)
-                self.attack(epcombat, playercombat)
+                if playercombat.invulnerability > 0:
+                    playercombat.invulnerability -= 1
+                    print(playercombat.invulnerability)
+                else:
+                    self.display_dmg(playerpos, epcombat)
+                    self.world.delete_entity(epid)
+                    self.attack(epcombat, playercombat)
+                    playercombat.invulnerability = INVULNERABILITY_TIME
 
         projcetile_components = Pos, Sprite, Combat, Projectile
         for pid, (ppos, psprite, pcombat, _) in self.world.get_components(*projcetile_components):
@@ -123,12 +128,17 @@ class Collission(Processor):
                             self.create_item(epos, enemy.drop)
                         else:
                             self.create_item(epos)
+                        break
 
         enemy_components = Pos, Sprite, Combat, Enemy
         for eid, (epos, esprite, ecombat, enemy) in self.world.get_components(*enemy_components):
             if self.collide_with(epos, esprite, playerpos, playersprite):
-                if self.attack(ecombat, playercombat):
+                if playercombat.invulnerability > 0:
+                    playercombat.invulnerability -= 1
+                else:
+                    self.attack(ecombat, playercombat)
                     self.display_dmg(epos, ecombat)
+                    playercombat.invulnerability = INVULNERABILITY_TIME
 
     def attack(self, combat1: Combat, combat2: Combat, combat2_id=None):
         combat2.hp -= combat1.damage

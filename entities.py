@@ -1,6 +1,6 @@
 from random import choice
 import pyxel
-from components import (BarrierGun, CircileNearTarget, MoveF, MoveX, Pos, Sprite, Combat, Enemy, Movement, Gun, HPBar,
+from components import (BarrierGun, CircileNearTarget, FourGun, MoveF, MoveX, Pos, Sprite, Combat, Enemy, Movement, Gun, HPBar,
                         MoveToPlayer, MoveXtoPlayer, RotationGun,
                         FourRotationGun, CircularMovement)
 from items import Items
@@ -12,90 +12,6 @@ def coisa(x):
     b = x % 100 > 50
     impopar = (x // 100) % 2 == 0
     return 0 if b else 1 if impopar else -.2
-
-
-def enemy1(create_entity, x=None, y=None):
-    _x, _y = rndxy()
-    hp = 3
-    drop = choice([
-        Items.change_attack,
-        Items.plus_bullet,
-    ])
-    return create_entity(
-        Sprite(
-            sprite=sprites.SPHERE
-        ),
-        Pos(
-            x=x if x else _x,
-            y=y if y else pyxel.rndi(-64, - 16),
-        ),
-        MoveToPlayer(speed=.5),
-        Enemy(drop=drop),
-        Combat(hp=hp, max_hp=hp, damage=1),
-    )
-
-
-def enemy2(create_entity, x=None, y=None):
-    _x, _y = rndxy()
-    x = x if x else _x
-    y = y if y else -16
-    hp = 10
-    return create_entity(
-        Sprite(
-            sprite=sprites.E2
-        ),
-        Pos(
-            x=x,
-            y=y if y else pyxel.rndi(-64, - 16),
-        ),
-        MoveToPlayer(speed=.5),
-        Enemy(),
-        Combat(hp=hp, max_hp=hp, damage=2),
-        Gun(speed=3, angle=90, aim_target=True, cd=4),
-        HPBar()
-    )
-
-
-def enemy3(create_entity, x=None, y=None):
-    _x, _y = rndxy()
-    hp = 25
-    return create_entity(
-        Sprite(
-            sprite=sprites.E3
-        ),
-        Pos(
-            x=x if x else _x,
-            y=y if y else -16,
-        ),
-        Movement(speed=.5, angle=90),
-        Enemy(),
-        Combat(hp=hp, max_hp=hp, damage=3),
-        Gun(speed=2, angle=90, cd=50),
-        HPBar()
-    )
-
-
-def enemy4(create_entity, x=None, y=None):
-    _x, _y = rndxy()
-    x = x if x else _x
-    y = y if y else -16
-    hp = 150
-    return create_entity(
-        Sprite(
-            sprite=sprites.E4
-        ),
-        Pos(
-            x=x,
-            y=y if y else pyxel.rndi(-64, - 16),
-        ),
-        MoveXtoPlayer(speed=5),
-        Enemy(),
-        Combat(hp=hp,
-               max_hp=hp, damage=4),
-        Gun(speed=3, angle=0, cd=50, timer=150),
-        Gun(speed=3, angle=90, aim_target=True, cd=4),
-        HPBar(),
-    )
 
 
 def rotational_boss(create_entity, x=None, y=None):
@@ -277,11 +193,46 @@ def bartolomeo(create_entity, x=None, y=None):
     )
 
 
+def sorriso_ronaldo(create_entity, x=None, y=None):
+    _x, _y = rndxy()
+    hp = 5
+    return create_entity(
+        Sprite(
+            sprite=sprites.RONALDO
+        ),
+        Pos(
+            x=x if x else _x,
+            y=y if y else pyxel.rndi(-64, - 16),
+        ),
+        Movement(speed=.1),
+        MoveX(speed=1, f=lambda x: pyxel.sin(x)*1.6, angle=90),
+        Enemy(),
+        Gun(speed=2, angle=90, cd=25, timer=90),
+        Combat(hp=hp, max_hp=hp, damage=1),
+    )
+
+
+def cabesakura(create_entity, x=None, y=None):
+    _x, _y = rndxy()
+    hp = 100
+    return create_entity(
+        Sprite(
+            sprite=sprites.CABESAKURA
+        ),
+        Pos(
+            x=x if x else _x,
+            y=y if y else pyxel.rndi(-64, - 16),
+        ),
+        MoveToPlayer(speed=1,
+                     f=lambda x: 0 if x // 100 % 2 == 0 else 1),
+        FourRotationGun(speed=2, cd=6, timer=20, angle=45, inc=1,
+                        f=lambda x: 1 if x // 100 % 2 == 0 else 0),
+        Combat(hp=hp, max_hp=hp, damage=1),
+        Enemy(),
+    )
+
+
 entities_list = [
-    enemy1,
-    enemy2,
-    enemy3,
-    enemy4,
     rotational_boss,
     rotationer_gunner,
     slow_walker,

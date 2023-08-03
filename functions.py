@@ -1,5 +1,5 @@
 import pyxel
-from components import Sprite, Pos
+from components import Gun, Sprite, Pos
 from math import sqrt
 
 
@@ -27,3 +27,11 @@ def distance_between(pos1: Pos, pos2: Pos):
     n1 = (pos1.x - pos2.x)**2
     n2 = (pos1.y - pos2.y)**2
     return sqrt(n1 + n2)
+
+
+def inside_screen(pos: Pos):
+    if pos.x < -4 or pos.x > pyxel.width:
+        return False
+    if pos.y < -4 or pos.y > pyxel.height:
+        return False
+    return True

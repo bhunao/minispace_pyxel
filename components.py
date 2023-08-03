@@ -55,6 +55,7 @@ class Combat:
     hp: int = 1
     max_hp: int = hp
     damage: int = 0
+    invulnerability: int = 0
 
 
 @dataclass
@@ -135,6 +136,8 @@ class Gun:
     cd: int = 50
     aim_target: bool = False
     timer: int = 20
+    step: int = 0
+    f: Optional[Callable] = None
 
 
 @dataclass
