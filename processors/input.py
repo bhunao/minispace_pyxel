@@ -2,7 +2,7 @@ import pyxel
 from items import AttackStyle
 import sprites
 from esper import Processor
-from components import (MoveF, MoveToEnemy, Projectile, Pos, Sprite, CircularMovement, Timer,
+from components import (MoveF, MoveToEnemy, MoveToPlayer, MoveXtoPlayer, Projectile, Pos, Sprite, CircularMovement, Timer,
                         Combat, Movement, Player, Text)
 from functions import frame_cd
 from math import sin
@@ -10,7 +10,7 @@ import entities
 
 
 class InputHandler(Processor):
-    attack_style: AttackStyle = AttackStyle.normal_attack
+    attack_style: AttackStyle = AttackStyle.zizag_attack
     cd: int = 10
     select: bool = False
 
@@ -47,8 +47,9 @@ class InputHandler(Processor):
                 Projectile(),
                 Pos(x=x, y=pos.y),
                 Sprite(sprite=sprites.BULLET),
-                CircularMovement(speed=3, angle=angle+ang_dif),
-
+                Movement(speed=3, angle=angle+ang_dif),
+                MoveToPlayer(speed=-2,
+                             f=lambda x: 0 if x < 20 else 1),
                 Timer(35),
                 Combat(damage=combat.damage),
             )

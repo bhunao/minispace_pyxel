@@ -8,6 +8,12 @@ import sprites
 from functions import rndxy
 
 
+def coisa(x):
+    b = x % 100 > 50
+    impopar = (x // 100) % 2 == 0
+    return 0 if b else 1 if impopar else -.2
+
+
 def enemy1(create_entity, x=None, y=None):
     _x, _y = rndxy()
     hp = 3
@@ -212,12 +218,6 @@ def slow_shooter(create_entity, x=None, y=None):
 def ronnie_wall(create_entity, x=None, y=None):
     _x, _ = rndxy()
     hp = 10
-
-    def coisa(x):
-        b = x % 100 > 50
-        impopar = (x // 100) % 2 == 0
-        return 0 if b else 1 if impopar else -.2
-
     return create_entity(
         Sprite(
             sprite=sprites.WALLBOY
@@ -244,8 +244,8 @@ def rodoaldo(create_entity, x=None, y=None):
             x=x if x else _x,
             y=y if y else pyxel.rndi(-64, - 16),
         ),
-        CircularMovement(speed=1, f=lambda x: 0 if x < 100 else 1, radius=5),
-        Movement(speed=1, f=lambda x: 1 if x < 100 else 0, angle=90),
+        CircularMovement(speed=1, f=coisa, radius=5),
+        Movement(speed=1, f=coisa, angle=90),
         Enemy(exp=2),
         Gun(speed=2, aim_target=True, cd=30, timer=100),
         Combat(hp=hp, max_hp=hp, damage=1),
@@ -272,7 +272,7 @@ def bartolomeo(create_entity, x=None, y=None):
                    cd=15,
                    inc=3,
                    timer=120),
-        Enemy(exp=5),
+        Enemy(exp=5, drop=drop),
         Combat(hp=hp, max_hp=hp, damage=1),
     )
 

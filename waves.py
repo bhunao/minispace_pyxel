@@ -2,27 +2,6 @@ from entities import (bartolomeo, rodoaldo, slow_shooter, enemy2, enemy3, enemy4
                       rotationer_gunner, rotational_boss, slow_walker, spinning_jack, spiral_daniel, ronnie_wall)
 
 waves = [
-    * [
-        [spiral_daniel, (x-8, -8), 1, True]
-        for x in range(-50, 272, 48)
-    ],
-    *[
-        [spiral_daniel, (x+16, -40), 1, True]
-        for x in range(-50, 272, 48)
-    ],
-    *[
-        [spiral_daniel, (x, -72), 1, True]
-        for x in range(-50, 272, 48)
-    ],
-    *[
-        [spiral_daniel, (x+16, -104), 1, True]
-        for x in range(-50, 272, 48)
-    ],
-    *[
-        [spiral_daniel, (x, -136), 1, True]
-        for x in range(-50, 272, 48)
-    ],
-    [spiral_daniel, (110-8, -168), 1, False],
     # ================== wave 01
     [slow_walker, (61, -16), 1, True],
     [slow_walker, (106, -8), 1, True],
@@ -86,8 +65,13 @@ waves = [
     # ================== wave ??
     [rotational_boss, (50,), 1, False],
     # ================== wave ??
-    [rotationer_gunner, (50,), 1, True],
-    [rotationer_gunner, (160,), 1, False],
+    [rotationer_gunner, (50, 0), 1, True],
+    [rotationer_gunner, (160, 0), 1, True],
+    [rodoaldo, (10, -32), 1, True],
+    [rodoaldo, (50, -32), 1, True],
+    [rodoaldo, (106, -32), 1, True],
+    [rodoaldo, (170, -32), 1, True],
+    [rodoaldo, (210, -32), 1, False],
     # ================== wave ?? WALL
     *[
         [ronnie_wall, (x, -10), 1, True]
@@ -99,12 +83,33 @@ waves = [
     [enemy2, (), 1, True],
     [enemy3, (), 2, False],
     [enemy4, (), 1, False],
-    [spiral_daniel, (), 50, False],
+    [spinning_jack, (), 5, False],
     # ================== wave ??
     [bartolomeo, (36, -48), 1, True],
     [bartolomeo, (102, -56), 1, True],
     [bartolomeo, (168, -48), 1, False],
     # ================== wave ?? SECOND WALL
+    *[
+        [spiral_daniel, (x-8, -8), 1, True]
+        for x in range(-50, 272, 48)
+    ],
+    *[
+        [spiral_daniel, (x+16, -40), 1, True]
+        for x in range(-50, 272, 48)
+    ],
+    *[
+        [spiral_daniel, (x, -72), 1, True]
+        for x in range(-50, 272, 48)
+    ],
+    *[
+        [spiral_daniel, (x+32, -104), 1, True]
+        for x in range(-50, 272, 48)
+    ],
+    *[
+        [spiral_daniel, (x, -136), 1, True]
+        for x in range(-50, 272, 48)
+    ],
+    [spiral_daniel, (110-8, -168), 1, False],
     # ================== wave ??
     [rotational_boss, (-50,), 1, True],
 ]

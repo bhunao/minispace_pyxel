@@ -56,9 +56,11 @@ class Move(Processor):
                 pos.x = pyxel.rndi(0, pyxel.width)
 
         if not player:
-            return
+            player = Pos(pyxel.width//2, pyxel.height + 100)
+            p_sprite = Sprite()
+        else:
+            _, (player, p_sprite, _) = player[0]
 
-        _, (player, p_sprite, _) = player[0]
         player = Pos(*center_of(p_sprite, player))
 
         for _, components in self.get_components(Pos, MoveToPlayer, Sprite):
