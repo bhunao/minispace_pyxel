@@ -2,11 +2,6 @@ from entities import (bartolomeo, cabesakura, rodoaldo, slow_shooter,
                       rotationer_gunner, rotational_boss, slow_walker, sorriso_ronaldo, spinning_jack, spiral_daniel, ronnie_wall)
 
 waves = [
-    *[
-        [cabesakura, (), 1, 100]
-        for _ in range(5)
-    ],
-    [cabesakura, (1, -8), 1, -1],
     # ================== wave 01
     [slow_walker, (61, -16), 1, 0],
     [slow_walker, (106, -8), 1, 0],
@@ -131,4 +126,9 @@ waves = [
     ],
     [spiral_daniel, (110-8, -168), 1, -1],
     # ================== wave ??
+    *[
+        [cabesakura, (), 1, 100]
+        for _ in range(5)
+    ],
+    [cabesakura, (1, -8), 1, -1],
 ]
