@@ -78,7 +78,7 @@ def slow_walker(create_entity, x=None, y=None):
 
 def spinning_jack(create_entity, x=None, y=None):
     _x, _y = rndxy()
-    hp = 3
+    hp = 10
     return create_entity(
         Sprite(
             sprite=sprites.E6
@@ -98,6 +98,12 @@ def spinning_jack(create_entity, x=None, y=None):
 def spiral_daniel(create_entity, x=None, y=None, speed=.5):
     _x, _y = rndxy()
     hp = 15
+    drop = None
+    if pyxel.rndi(0, 100) < 10:
+        drop = choice([
+            Items.change_attack,
+            Items.plus_bullet,
+        ])
     return create_entity(
         Sprite(
             sprite=sprites.E3
@@ -108,7 +114,7 @@ def spiral_daniel(create_entity, x=None, y=None, speed=.5):
         ),
         Movement(speed=speed, angle=90),
         FourRotationGun(speed=2, cd=2, inc=5, timer=15),
-        Enemy(exp=5),
+        Enemy(exp=5, drop=drop),
         Combat(hp=hp, max_hp=hp, damage=1),
     )
 
@@ -134,6 +140,12 @@ def slow_shooter(create_entity, x=None, y=None):
 def ronnie_wall(create_entity, x=None, y=None):
     _x, _ = rndxy()
     hp = 10
+    drop = None
+    if pyxel.rndi(0, 1000):
+        drop = choice([
+            Items.change_attack,
+            Items.plus_bullet,
+        ])
     return create_entity(
         Sprite(
             sprite=sprites.WALLBOY
@@ -143,7 +155,7 @@ def ronnie_wall(create_entity, x=None, y=None):
             y=y if y else pyxel.rndi(-64, - 16),
         ),
         Movement(speed=.5, f=coisa),
-        Enemy(exp=2),
+        Enemy(exp=2, drop=drop),
         Gun(1, 90, 50, True, timer=150),
         Combat(hp=hp, max_hp=hp, damage=1),
     )

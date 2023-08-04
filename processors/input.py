@@ -10,7 +10,7 @@ import entities
 
 
 class InputHandler(Processor):
-    attack_style: AttackStyle = AttackStyle.zizag_attack
+    attack_style: AttackStyle = AttackStyle.normal_attack
     cd: int = 10
     select: bool = False
 
