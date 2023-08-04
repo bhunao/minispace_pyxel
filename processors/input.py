@@ -2,7 +2,7 @@ import pyxel
 from items import AttackStyle
 import sprites
 from esper import Processor
-from components import (MoveF, MoveToEnemy, MoveToPlayer, MoveXtoPlayer, Projectile, Pos, Sprite, CircularMovement, Timer,
+from components import (MoveF, MoveToEnemy, MoveToPlayer, MoveX, MoveXtoPlayer, Projectile, Pos, Sprite, CircularMovement, Timer,
                         Combat, Movement, Player, Text)
 from functions import frame_cd
 from math import sin
@@ -30,28 +30,15 @@ class InputHandler(Processor):
             return
 
         bullet_mult = player.bullets + player.level
-        sprite = sprites.BULLET
-        angle = -90
-        start = -2*bullet_mult
-        stop = 2*bullet_mult
-        step = (abs(start) + abs(stop)) // bullet_mult
-
-        if bullet_mult > 1:
-            angles = range(start, stop + step, step)
-        else:
-            angles = [0]
-
-        for ang_dif in angles:
-            x = pos.x + psprite.w//2 - sprite[0][3] // 2
+        for angle_dif in range(-1, 1+1):
             self.world.create_entity(
                 Projectile(),
-                Pos(x=x, y=pos.y),
+                Pos(x=pos.x, y=pos.y),
                 Sprite(sprite=sprites.BULLET),
-                Movement(speed=3, angle=angle+ang_dif),
-                MoveToPlayer(speed=-2,
-                             f=lambda x: 0 if x < 20 else 1),
+                Movement(speed=4, angle=-90),
+                MoveX(speed=3*angle_dif, f=lambda x: pyxel.sin(x*25)),
                 Timer(35),
-                Combat(damage=combat.damage),
+                Combat(damage=combat.damage+bullet_mult//2),
             )
 
     def spray_attack(self, pos, combat, psprite, player):

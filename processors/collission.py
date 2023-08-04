@@ -107,7 +107,6 @@ class Collission(Processor):
             if self.collide_with(eppos, epsprite, playerpos, playersprite):
                 if playercombat.invulnerability > 0:
                     playercombat.invulnerability -= 1
-                    print(playercombat.invulnerability)
                 else:
                     self.display_dmg(playerpos, epcombat)
                     self.world.delete_entity(epid)
