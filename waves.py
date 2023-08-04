@@ -22,7 +22,12 @@ waves = [
     [slow_walker, (11, -16), 1, 0],
     [spinning_jack, (56, -8), 1, 0],
     [slow_walker, (101, -16), 1, -1],
-    # ===
+    # ================== wave ??
+    *[
+        [sorriso_ronaldo, (16, -8), 1, 100]
+        for _ in range(5)
+    ],
+    [sorriso_ronaldo, (1, -8), 1, -1],
     [spinning_jack, (61, -16), 1, 0],
     [slow_walker, (106, -8), 1, 0],
     [spinning_jack, (151, -16), 1, -1],
