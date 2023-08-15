@@ -1,6 +1,6 @@
 import processors
 from components import Timer, Pos, Sprite, Speed
-import sprites
+import sprites, entities
 
 import esper
 import pyxel
@@ -20,9 +20,10 @@ class App:
             self.world.create_entity(
                 Timer(500),
                 Pos(150+diff, 100+diff),
-                Sprite(sprites.E6),
-                Speed(1, f_speed=lambda: pyxel.frame_count % 5 if pyxel.frame_count % 50 > 25 else -1, f_angle=lambda: pyxel.frame_count % 3),
+                Sprite(sprites.COLOR),
+                Speed(1, f_speed=lambda: pyxel.frame_count % 5, f_angle=lambda: pyxel.frame_count % 5),
             )
+            self.world.create_entity(*entities.rotational_boss)
 
         pyxel.run(self.update, self.draw)
 
@@ -30,6 +31,7 @@ class App:
         return
 
     def draw(self):
+        pyxel.cls(0)
         self.world.process()
 
 

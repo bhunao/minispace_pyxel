@@ -144,3 +144,6 @@ ATTACKCHANGE = [
 PLANET = [
     (0, 48, 0, 32, 32, Colors.BLACK),
 ]
+COLOR = [
+    (0, 16, 80, 16, 16, Colors.BLACK),
+]

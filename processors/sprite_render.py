@@ -18,7 +18,8 @@ class Movement(Processor):
         for components in self.world.get_components(Pos, Speed):
             _, (pos, speed) = components
             angle = radians(speed.angle)
-            speed_val = speed.f_speed()
+            print(speed.f_angle())
+            speed_val = speed.f_speed() * speed.speed
             pos.x += cos(angle) * speed_val
             pos.y += sin(angle) * speed_val
             speed.angle += speed.f_angle()
