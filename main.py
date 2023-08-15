@@ -1,7 +1,6 @@
-import sprites
-from components import (Player, Sprite, Pos, Combat, Star, Movement)
-from functions import rndxy
 import processors
+from components import Timer, Pos, Sprite, Speed
+import sprites
 
 import esper
 import pyxel
@@ -14,38 +13,15 @@ class App:
         # pyxel.playm(0, loop=True)
 
         self.world = esper.World()
-        self.world.add_processor(processors.Draw())
-        self.world.add_processor(processors.Move())
-        self.world.add_processor(processors.EnemySpawner())
-        self.world.add_processor(processors.HUD())
         self.world.add_processor(processors.Clock())
-        self.world.add_processor(processors.InputHandler())
-        self.world.add_processor(processors.Collission())
-        self.world.add_processor(processors.Render())
-        self.world.add_processor(processors.Shoot())
-        self.world.add_processor(processors.Game())
-
-        self.world.create_entity(
-            Sprite(
-                sprite=sprites.NV1
-            ),
-            Pos(
-                x=pyxel.width//2,
-                y=pyxel.height//2,
-            ),
-            Player(level=1),
-            Combat(hp=5, max_hp=5, damage=1)
-        )
-
-        for _ in range(125):
-            x, y = rndxy()
-            speed = pyxel.rndi(4, 5)
-            sprite = [sprites.STARS[pyxel.rndi(0, len(sprites.STARS)-1)]]
+        self.world.add_processor(processors.SpriteRender())
+        self.world.add_processor(processors.Movement())
+        for diff in range(-100, 100, 50):
             self.world.create_entity(
-                Sprite(sprite=sprite),
-                Pos(x=x, y=y),
-                Movement(speed=speed, angle=90),
-                Star(),
+                Timer(500),
+                Pos(150+diff, 100+diff),
+                Sprite(sprites.E6),
+                Speed(1, f_speed=lambda: pyxel.frame_count % 5 if pyxel.frame_count % 50 > 25 else -1, f_angle=lambda: pyxel.frame_count % 3),
             )
 
         pyxel.run(self.update, self.draw)
@@ -54,7 +30,6 @@ class App:
         return
 
     def draw(self):
-        pyxel.cls(0)
         self.world.process()
 
 

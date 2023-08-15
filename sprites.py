@@ -1,4 +1,11 @@
+from collections.abc import Sequence
 from enum import Enum
+from typing import Dict, Tuple, NewType
+
+
+SpriteType = NewType("SpriteType",Tuple[int, int, int, int, int, int, int, int]) 
+SpriteSequence = NewType("SpriteSequence", Sequence[SpriteType])
+StateSprite  = NewType("StateSprite", Dict[str, SpriteType | SpriteSequence])
 
 
 class Colors:

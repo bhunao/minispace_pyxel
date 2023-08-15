@@ -1,10 +1,2 @@
-from .render import Render
 from .clock import Clock
-from .hud import HUD
-from .enemy_spawner import EnemySpawner
-from .draw import Draw
-from .movement import Move
-from .input import InputHandler
-from .collission import Collission
-from .shoot import Shoot
-from .game import Game
+from .sprite_render import SpriteRender, Movement
