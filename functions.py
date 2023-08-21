@@ -1,5 +1,8 @@
+import sprites
+from typing import Tuple
+from dataclasses import dataclass
 import pyxel
-from components import Gun, Sprite, Pos
+from components import Sprite, Pos, Player
 from math import sqrt
 
 
@@ -35,3 +38,39 @@ def inside_screen(pos: Pos):
     if pos.y < -4 or pos.y > pyxel.height:
         return False
     return True
+
+def get_player(world) -> Tuple[int, Tuple[Player, Pos, Sprite]]:
+    for player_components in world.get_components(Player, Pos, Sprite):
+        return player_components
+    else:
+        return -1, (Player(), Pos(), Sprite(sprites.SPHERE))
+        
+
+@dataclass
+class myfunction:
+    def __init__(self, f) -> None:
+        self.f = f
+        self.val1 = None
+        self.val2 = None
+        self.re = None
+
+    def __matmul__(self, other):
+        if not self.val1:
+            self.val1 = other
+        elif not self.val2:
+            self.val2 = other
+            self.re = self.f(*self.val1, *self.val2)
+            return self.re
+        return self
+
+    def __rmatmul__(self, other):
+        if not self.val1:
+            self.val1 = other
+        elif not self.val2:
+            self.val2 = other
+            self.re = self.f(*self.val1, *self.val2)
+            return self.re
+        return self
+
+    def __str__(self) -> str:
+        return f"{self.f}, {self.val1}, {self.val2}, {self.re}"

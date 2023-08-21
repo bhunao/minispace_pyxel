@@ -1,4 +1,3 @@
-import pyxel
 from dataclasses import dataclass
 from typing import Callable, Optional
 from sprites import SpriteSequence
@@ -27,3 +26,8 @@ class Speed:
 @dataclass
 class Timer:
     time: int
+
+
+@dataclass
+class Player:
+    pass

@@ -16,6 +16,7 @@ class App:
         self.world.add_processor(processors.Clock())
         self.world.add_processor(processors.SpriteRender())
         self.world.add_processor(processors.Movement())
+        self.world.add_processor(processors.Collission())
         for diff in range(-100, 100, 50):
             self.world.create_entity(
                 Timer(500),
